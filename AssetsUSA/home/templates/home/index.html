@@ -44,51 +44,50 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('assetChart').getContext('2d');
-            
-            // Get data passed from the view
-            const years = JSON.parse('{{ years_json|escapejs }}');
-            const marketCaps = JSON.parse('{{ market_caps_json|escapejs }}');
-            
-            // Create the chart
-            const data = {
-                labels: years,
-                datasets: [{
-                    label: 'Stock Market Cap (Trillion $)',
-                    data: marketCaps,
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                    fill: false
-                }]
-            };
-            
-            const config = {
-                type: 'line',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            title: {
-                                display: true,
-                                text: 'Trillion USD'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'Year'
-                            }
-                        }
+    // Get the canvas element
+    const ctx = document.getElementById('assetChart').getContext('2d');
+
+    // Use the JSON data correctly without re-parsing what's already JSON
+    // The |safe filter prevents Django from escaping the JSON
+    const commercialData = {{ commercial_real_estate_chart_data|safe }};
+    const cryptoData = {{ crypto_chart_data|safe }};
+    const farmlandData = {{ farmland_chart_data|safe }};
+    const residentialData = {{ residential_real_estate_chart_data|safe }};
+    const stockMarketData = {{ stock_market_cap_chart_data|safe }};
+    const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Create datasets array from all asset types
+    const datasets = [
+        commercialData.datasets[0],
+        cryptoData.datasets[0], 
+        farmlandData.datasets[0],
+        residentialData.datasets[0],
+        stockMarketData.datasets[0],
+        treasuryData.datasets[0]
+    ];
+
+    // Create the chart
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: allYears,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap (USD)'
                     }
                 }
-            };
-            
-            new Chart(ctx, config);
-        });
+            }
+        }
+    });
     </script>
 </body>
 </html> 
