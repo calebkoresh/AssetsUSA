@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AssetsUSA - Home</title>
+{% extends 'home/base.html' %}
+
+{% block title %}AssetsUSA - Home{% endblock %}
+
+{% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
@@ -32,6 +31,18 @@
             margin-top: 20px;
             height: 300px;
         }
+        .charts-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
         .checkbox-container {
             display: flex;
             flex-wrap: wrap;
@@ -48,22 +59,35 @@
             margin-right: 5px;
         }
     </style>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
     <div class="container">
         <h1>Welcome to AssetsUSA</h1>
         <p>Your home for asset data.</p>
         <div class="checkbox-container">
             <!-- Checkboxes will be dynamically added here -->
         </div>
-        <div class="chart-container">
-            <canvas id="assetChart"></canvas>
+        <div class="charts-wrapper">
+            <div>
+                <div class="chart-title">Asset Market Cap Distribution (%)</div>
+                <div class="chart-container">
+                    <canvas id="assetChart"></canvas>
+                </div>
+            </div>
+            <div>
+                <div class="chart-title">Assets as Percentage of GDP (%)</div>
+                <div class="chart-container">
+                    <canvas id="gdpChart"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-    // Get the canvas element
+    // Get the canvas elements
     const ctx = document.getElementById('assetChart').getContext('2d');
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
 
     // Use the JSON data correctly without re-parsing what's already JSON
     // The |safe filter prevents Django from escaping the JSON
@@ -73,6 +97,7 @@
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const stockMarketData = {{ stock_market_cap_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Original datasets with their raw values
@@ -138,6 +163,7 @@
     });
 
     let chart;
+    let gdpChart;
 
     // Function to update the chart based on selected checkboxes
     function updateChart() {
@@ -152,6 +178,10 @@
             if (chart) {
                 chart.data.datasets = [];
                 chart.update();
+            }
+            if (gdpChart) {
+                gdpChart.data.datasets = [];
+                gdpChart.update();
             }
             return;
         }
@@ -193,7 +223,7 @@
             };
         });
 
-        // Initialize or update the chart
+        // Update the first chart (percentage of total market cap)
         if (chart) {
             chart.data.labels = validYears;
             chart.data.datasets = percentageDatasets;
@@ -220,10 +250,72 @@
                 }
             });
         }
+
+        // Now, create or update the GDP percentage chart
+        // Find years where both GDP and selected assets have data
+        const gdpYearIndices = [];
+        
+        for (let i = 0; i < allYears.length; i++) {
+            // Check if GDP and all selected datasets have valid data for this year
+            const gdpValue = gdpData.datasets[0].data[i];
+            const gdpHasData = gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0;
+            
+            const allHaveData = selectedDatasets.every(dataset => {
+                const value = dataset.rawData[i];
+                return value !== undefined && value !== null && !isNaN(value);
+            });
+            
+            if (gdpHasData && allHaveData) {
+                gdpYearIndices.push(i);
+            }
+        }
+        
+        // Get the corresponding years for valid GDP indices
+        const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+        
+        // Create datasets for GDP percentage
+        const gdpPercentageDatasets = selectedDatasets.map(dataset => {
+            return {
+                ...dataset,
+                data: gdpYearIndices.map(yearIndex => {
+                    const assetValue = dataset.rawData[yearIndex] || 0;
+                    const gdpValue = gdpData.datasets[0].data[yearIndex] || 0;
+                    // Avoid division by zero
+                    return gdpValue === 0 ? 0 : (assetValue / gdpValue) * 100;
+                })
+            };
+        });
+
+        // Update the GDP percentage chart
+        if (gdpChart) {
+            gdpChart.data.labels = gdpValidYears;
+            gdpChart.data.datasets = gdpPercentageDatasets;
+            gdpChart.update();
+        } else {
+            gdpChart = new Chart(gdpCtx, {
+                type: 'line',
+                data: {
+                    labels: gdpValidYears,
+                    datasets: gdpPercentageDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentage of GDP (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
     }
 
     // Initialize the chart with all datasets
     updateChart();
     </script>
-</body>
-</html> 
+{% endblock %} 

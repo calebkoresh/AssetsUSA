@@ -11,7 +11,9 @@ def asset_data(request):
         'farmland',
         'residential_real_estate',
         'stock_market_cap',
-        'treasury_bonds'
+        'treasury_bonds',
+        'gdp',
+        'gold'
     ]
     
     # Initialize data structure
