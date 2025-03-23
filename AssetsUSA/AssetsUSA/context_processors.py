@@ -14,50 +14,43 @@ def asset_data(request):
         'treasury_bonds'
     ]
     
-    context = {}
-    all_years = []
+    # Initialize data structure
+    yearly_data = {}
+    all_years = set()
     
+    # First pass: collect all years and data
     for asset_type in asset_types:
-        # Query the database
         with connection.cursor() as cursor:
             cursor.execute(f"SELECT year, market_cap FROM {asset_type} ORDER BY year")
             rows = cursor.fetchall()
             
-            years = [row[0] for row in rows]
-            values = [float(row[1]) for row in rows]
-        
-        # Add to context
-        context[f'{asset_type}_years'] = json.dumps(years)
-        context[f'{asset_type}_values'] = json.dumps(values)
-        
-        # Store Chart.js friendly format
+            for year, value in rows:
+                all_years.add(year)
+                if year not in yearly_data:
+                    yearly_data[year] = {}
+                yearly_data[year][asset_type] = float(value)
+    
+    # Convert to sorted list of years
+    all_years = sorted(list(all_years))
+    
+    # Prepare context with complete data structure
+    context = {
+        'all_years_json': json.dumps(all_years)
+    }
+    
+    # Create datasets ensuring null values for missing years
+    for asset_type in asset_types:
+        data_points = []
+        for year in all_years:
+            value = yearly_data.get(year, {}).get(asset_type, None)
+            data_points.append(value)
+            
         context[f'{asset_type}_chart_data'] = json.dumps({
-            'labels': years,
+            'labels': all_years,
             'datasets': [{
                 'label': asset_type.replace('_', ' ').title(),
-                'data': values,
-                'borderColor': get_color_for_asset(asset_type),
-                'fill': False
+                'data': data_points
             }]
         })
-        
-        # Update all_years to have the most complete set
-        if len(years) > len(all_years):
-            all_years = years
-    
-    # Add global years data
-    context['all_years_json'] = json.dumps(all_years)
     
     return context
-
-def get_color_for_asset(asset_type):
-    """Return a color for each asset type."""
-    colors = {
-        'commercial_real_estate': 'rgb(255, 99, 132)',
-        'crypto': 'rgb(54, 162, 235)',
-        'farmland': 'rgb(255, 206, 86)',
-        'residential_real_estate': 'rgb(75, 192, 192)',
-        'stock_market_cap': 'rgb(153, 102, 255)',
-        'treasury_bonds': 'rgb(255, 159, 64)'
-    }
-    return colors.get(asset_type, 'rgb(0, 0, 0)')

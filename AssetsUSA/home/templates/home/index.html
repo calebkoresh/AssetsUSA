@@ -32,12 +32,30 @@
             margin-top: 20px;
             height: 300px;
         }
+        .checkbox-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+        }
+        .checkbox-item input {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome to AssetsUSA</h1>
         <p>Your home for asset data.</p>
+        <div class="checkbox-container">
+            <!-- Checkboxes will be dynamically added here -->
+        </div>
         <div class="chart-container">
             <canvas id="assetChart"></canvas>
         </div>
@@ -57,37 +75,155 @@
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Create datasets array from all asset types
-    const datasets = [
-        commercialData.datasets[0],
-        cryptoData.datasets[0], 
-        farmlandData.datasets[0],
-        residentialData.datasets[0],
-        stockMarketData.datasets[0],
-        treasuryData.datasets[0]
+    // Original datasets with their raw values
+    const originalDatasets = [
+        {
+            ...commercialData.datasets[0],
+            id: 'commercial',
+            rawData: commercialData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index) // Store all year indices
+        },
+        {
+            ...cryptoData.datasets[0],
+            id: 'crypto',
+            rawData: cryptoData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        },
+        {
+            ...farmlandData.datasets[0],
+            id: 'farmland',
+            rawData: farmlandData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        },
+        {
+            ...residentialData.datasets[0],
+            id: 'residential',
+            rawData: residentialData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        },
+        {
+            ...stockMarketData.datasets[0],
+            id: 'stockMarket',
+            rawData: stockMarketData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        },
+        {
+            ...treasuryData.datasets[0],
+            id: 'treasury',
+            rawData: treasuryData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        }
     ];
 
-    // Create the chart
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: allYears,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Market Cap (USD)'
-                    }
-                }
+    // Create checkboxes for each dataset
+    const checkboxContainer = document.querySelector('.checkbox-container');
+    originalDatasets.forEach(dataset => {
+        const checkboxItem = document.createElement('div');
+        checkboxItem.className = 'checkbox-item';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = dataset.id;
+        checkbox.checked = true;
+        checkbox.addEventListener('change', updateChart);
+        
+        const label = document.createElement('label');
+        label.htmlFor = dataset.id;
+        label.textContent = dataset.label;
+        label.style.color = dataset.borderColor;
+        
+        checkboxItem.appendChild(checkbox);
+        checkboxItem.appendChild(label);
+        checkboxContainer.appendChild(checkboxItem);
+    });
+
+    let chart;
+
+    // Function to update the chart based on selected checkboxes
+    function updateChart() {
+        // Get the selected datasets based on checkbox state
+        const selectedDatasets = originalDatasets.filter(dataset => 
+            document.getElementById(dataset.id).checked
+        );
+
+        // If no datasets are selected, return early to avoid division by zero
+        if (selectedDatasets.length === 0) {
+            // If chart exists, hide it
+            if (chart) {
+                chart.data.datasets = [];
+                chart.update();
+            }
+            return;
+        }
+
+        // Find years where data is available for all selected asset classes
+        const validYearIndices = [];
+        
+        for (let i = 0; i < allYears.length; i++) {
+            // Check if all selected datasets have valid data for this year
+            const allHaveData = selectedDatasets.every(dataset => {
+                const value = dataset.rawData[i];
+                // Consider the data valid if it's a number and not NaN
+                return value !== undefined && value !== null && !isNaN(value);
+            });
+            
+            if (allHaveData) {
+                validYearIndices.push(i);
             }
         }
-    });
+        
+        // Get the corresponding years for valid indices
+        const validYears = validYearIndices.map(index => allYears[index]);
+        
+        // Calculate total market cap for each valid year using only the selected datasets
+        const totalsByYear = validYearIndices.map(yearIndex => {
+            return selectedDatasets.reduce((total, dataset) => {
+                return total + (dataset.rawData[yearIndex] || 0);
+            }, 0);
+        });
+
+        // Convert each dataset's values to percentages of the total
+        const percentageDatasets = selectedDatasets.map(dataset => {
+            return {
+                ...dataset,
+                data: validYearIndices.map((yearIndex, index) => {
+                    // Avoid division by zero
+                    return totalsByYear[index] === 0 ? 0 : (dataset.rawData[yearIndex] / totalsByYear[index]) * 100;
+                })
+            };
+        });
+
+        // Initialize or update the chart
+        if (chart) {
+            chart.data.labels = validYears;
+            chart.data.datasets = percentageDatasets;
+            chart.update();
+        } else {
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: validYears,
+                    datasets: percentageDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Percentage of Total Market Cap (%)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // Initialize the chart with all datasets
+    updateChart();
     </script>
 </body>
 </html> 
