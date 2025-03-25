@@ -93,7 +93,6 @@
     // The |safe filter prevents Django from escaping the JSON
     const commercialData = {{ commercial_real_estate_chart_data|safe }};
     const cryptoData = {{ crypto_chart_data|safe }};
-    const farmlandData = {{ farmland_chart_data|safe }};
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const stockMarketData = {{ stock_market_cap_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
@@ -113,12 +112,6 @@
             ...cryptoData.datasets[0],
             id: 'crypto',
             rawData: cryptoData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        },
-        {
-            ...farmlandData.datasets[0],
-            id: 'farmland',
-            rawData: farmlandData.datasets[0].data,
             yearIndices: allYears.map((_, index) => index)
         },
         {

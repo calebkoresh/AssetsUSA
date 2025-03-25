@@ -8,7 +8,6 @@ def asset_data(request):
     asset_types = [
         'commercial_real_estate',
         'crypto',
-        'farmland',
         'residential_real_estate',
         'stock_market_cap',
         'treasury_bonds',

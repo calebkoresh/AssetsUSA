@@ -50,23 +50,118 @@
                 <canvas id="sp500Chart"></canvas>
             </div>
         </div>
+        <div>
+            <div class="chart-title">Top 20 Stocks as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="top20Chart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Basic Materials as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="basicMaterialsChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Communication Services as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="commServicesChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Consumer Cyclical as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="consumerCyclicalChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Consumer Defensive as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="consumerDefensiveChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Energy as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="energyChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Financial Services as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="financialServicesChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Healthcare as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="healthcareChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Industrials as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="industrialsChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Real Estate as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="realEstateChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Technology as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="techChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Utilities as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="utilitiesChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <script>
     const ctx = document.getElementById('stocksChart').getContext('2d');
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     const sp500Ctx = document.getElementById('sp500Chart').getContext('2d');
+    const top20Ctx = document.getElementById('top20Chart').getContext('2d');
+    const basicMaterialsCtx = document.getElementById('basicMaterialsChart').getContext('2d');
+    const commServicesCtx = document.getElementById('commServicesChart').getContext('2d');
+    const consumerCyclicalCtx = document.getElementById('consumerCyclicalChart').getContext('2d');
+    const consumerDefensiveCtx = document.getElementById('consumerDefensiveChart').getContext('2d');
+    const energyCtx = document.getElementById('energyChart').getContext('2d');
+    const financialServicesCtx = document.getElementById('financialServicesChart').getContext('2d');
+    const healthcareCtx = document.getElementById('healthcareChart').getContext('2d');
+    const industrialsCtx = document.getElementById('industrialsChart').getContext('2d');
+    const realEstateCtx = document.getElementById('realEstateChart').getContext('2d');
+    const techCtx = document.getElementById('techChart').getContext('2d');
+    const utilitiesCtx = document.getElementById('utilitiesChart').getContext('2d');
     
     // Get all the asset data
     const stockData = {{ stock_market_cap_chart_data|safe }};
     const cryptoData = {{ crypto_chart_data|safe }};
-    const farmlandData = {{ farmland_chart_data|safe }};
     const goldData = {{ gold_chart_data|safe }};
     const commercialData = {{ commercial_real_estate_chart_data|safe }};
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const gdpData = {{ gdp_chart_data|safe }};
     const sp500Data = {{ sp500_chart_data|safe }};
+    const top20Data = {{ top20_stocks_chart_data|safe }};
+    const basicMaterialsData = {{ stocks_basic_materials_chart_data|safe }};
+    const commServicesData = {{ stocks_comm_services_chart_data|safe }};
+    const consumerCyclicalData = {{ stocks_consumer_cyclical_chart_data|safe }};
+    const consumerDefensiveData = {{ stocks_consumer_defensive_chart_data|safe }};
+    const energyData = {{ stocks_energy_chart_data|safe }};
+    const financialServicesData = {{ stocks_financial_services_chart_data|safe }};
+    const healthcareData = {{ stocks_healthcare_chart_data|safe }};
+    const industrialsData = {{ stocks_industrials_chart_data|safe }};
+    const realEstateData = {{ stocks_real_estate_chart_data|safe }};
+    const techData = {{ stocks_tech_chart_data|safe }};
+    const utilitiesData = {{ stocks_utilities_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Find years where data is available for all assets
@@ -75,7 +170,6 @@
         const allHaveData = [
             stockData.datasets[0].data[i],
             cryptoData.datasets[0].data[i],
-            farmlandData.datasets[0].data[i],
             goldData.datasets[0].data[i],
             commercialData.datasets[0].data[i],
             residentialData.datasets[0].data[i],
@@ -93,7 +187,6 @@
         const total = (
             stockData.datasets[0].data[i] +
             cryptoData.datasets[0].data[i] +
-            farmlandData.datasets[0].data[i] +
             goldData.datasets[0].data[i] +
             commercialData.datasets[0].data[i] +
             residentialData.datasets[0].data[i] +
@@ -224,5 +317,117 @@
             }
         }
     });
+
+    // Find years where both Top 20 stocks and total stock data are available
+    const top20YearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const top20Value = top20Data.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = top20Value !== undefined && top20Value !== null && !isNaN(top20Value) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            top20YearIndices.push(i);
+        }
+    }
+
+    // Calculate Top 20 stocks as percentage of total stock market
+    const top20ValidYears = top20YearIndices.map(index => allYears[index]);
+    const top20Percentages = top20YearIndices.map(i => {
+        const top20Value = top20Data.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (top20Value / stockValue) * 100;
+    });
+
+    // Create the Top 20 stocks percentage chart
+    const top20Chart = new Chart(top20Ctx, {
+        type: 'line',
+        data: {
+            labels: top20ValidYears,
+            datasets: [{
+                label: 'Top 20 Stocks % of Total Stock Market',
+                data: top20Percentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Function to create sector percentage chart
+    function createSectorChart(sectorData, chartCtx, sectorName) {
+        // Find years where both sector and total stock data are available
+        const sectorYearIndices = [];
+        for (let i = 0; i < allYears.length; i++) {
+            const sectorValue = sectorData.datasets[0].data[i];
+            const stockValue = stockData.datasets[0].data[i];
+            const bothHaveData = sectorValue !== undefined && sectorValue !== null && !isNaN(sectorValue) &&
+                                stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+            
+            if (bothHaveData) {
+                sectorYearIndices.push(i);
+            }
+        }
+
+        // Calculate sector as percentage of total stock market
+        const sectorValidYears = sectorYearIndices.map(index => allYears[index]);
+        const sectorPercentages = sectorYearIndices.map(i => {
+            const sectorValue = sectorData.datasets[0].data[i];
+            const stockValue = stockData.datasets[0].data[i];
+            return (sectorValue / stockValue) * 100;
+        });
+
+        // Create the sector percentage chart
+        return new Chart(chartCtx, {
+            type: 'line',
+            data: {
+                labels: sectorValidYears,
+                datasets: [{
+                    label: `${sectorName} % of Total Stock Market`,
+                    data: sectorPercentages,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Percentage of Total Stock Market (%)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Create all sector charts
+    createSectorChart(basicMaterialsData, basicMaterialsCtx, 'Basic Materials');
+    createSectorChart(commServicesData, commServicesCtx, 'Communication Services');
+    createSectorChart(consumerCyclicalData, consumerCyclicalCtx, 'Consumer Cyclical');
+    createSectorChart(consumerDefensiveData, consumerDefensiveCtx, 'Consumer Defensive');
+    createSectorChart(energyData, energyCtx, 'Energy');
+    createSectorChart(financialServicesData, financialServicesCtx, 'Financial Services');
+    createSectorChart(healthcareData, healthcareCtx, 'Healthcare');
+    createSectorChart(industrialsData, industrialsCtx, 'Industrials');
+    createSectorChart(realEstateData, realEstateCtx, 'Real Estate');
+    createSectorChart(techData, techCtx, 'Technology');
+    createSectorChart(utilitiesData, utilitiesCtx, 'Utilities');
     </script>
 {% endblock %}
