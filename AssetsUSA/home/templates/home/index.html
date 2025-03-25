@@ -98,6 +98,7 @@
     const stockMarketData = {{ stock_market_cap_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const gdpData = {{ gdp_chart_data|safe }};
+    const goldData = {{ gold_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Original datasets with their raw values
@@ -136,6 +137,12 @@
             ...treasuryData.datasets[0],
             id: 'treasury',
             rawData: treasuryData.datasets[0].data,
+            yearIndices: allYears.map((_, index) => index)
+        },
+        {
+            ...goldData.datasets[0],
+            id: 'gold',
+            rawData: goldData.datasets[0].data,
             yearIndices: allYears.map((_, index) => index)
         }
     ];

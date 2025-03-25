@@ -13,7 +13,20 @@ def asset_data(request):
         'stock_market_cap',
         'treasury_bonds',
         'gdp',
-        'gold'
+        'gold',
+        'top20_stocks',
+        'sp500',
+        'stocks_basic_materials',
+        'stocks_comm_services',
+        'stocks_consumer_cyclical',
+        'stocks_consumer_defensive',
+        'stocks_energy',
+        'stocks_financial_services',
+        'stocks_healthcare',
+        'stocks_industrials',
+        'stocks_real_estate',
+        'stocks_tech',
+        'stocks_utilities'
     ]
     
     # Initialize data structure
