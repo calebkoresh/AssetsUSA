@@ -5,16 +5,6 @@
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f5f5f5;
-        }
         .container {
             text-align: center;
             padding: 2rem;
@@ -23,18 +13,11 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 80%;
             max-width: 800px;
-        }
-        h1 {
-            color: #333;
+            margin: 2rem auto;
         }
         .chart-container {
             margin-top: 20px;
-            height: 300px;
-        }
-        .charts-wrapper {
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
+            height: 400px;
         }
         .chart-title {
             margin-top: 30px;
@@ -43,21 +26,6 @@
             font-weight: bold;
             color: #333;
         }
-        .checkbox-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 10px;
-            margin: 20px 0;
-        }
-        .checkbox-item {
-            display: flex;
-            align-items: center;
-            margin-right: 10px;
-        }
-        .checkbox-item input {
-            margin-right: 5px;
-        }
     </style>
 {% endblock %}
 
@@ -65,29 +33,66 @@
     <div class="container">
         <h1>Welcome to AssetsUSA</h1>
         <p>Your home for asset data.</p>
-        <div class="checkbox-container">
-            <!-- Checkboxes will be dynamically added here -->
-        </div>
-        <div class="charts-wrapper">
-            <div>
-                <div class="chart-title">Asset Market Cap Distribution (%)</div>
-                <div class="chart-container">
-                    <canvas id="assetChart"></canvas>
-                </div>
+        
+        <div>
+            <div class="chart-title">Total Asset Pool by Year</div>
+            <div class="chart-container">
+                <canvas id="totalAssetsChart"></canvas>
             </div>
-            <div>
-                <div class="chart-title">Assets as Percentage of GDP (%)</div>
-                <div class="chart-container">
-                    <canvas id="gdpChart"></canvas>
-                </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">GDP by Year</div>
+            <div class="chart-container">
+                <canvas id="gdpChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">Stocks as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="stocksChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">Real Estate as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="realEstateChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">Gold as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="goldChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">Crypto as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="cryptoChart"></canvas>
+            </div>
+        </div>
+        
+        <div>
+            <div class="chart-title">Treasury Bonds as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="treasuryChart"></canvas>
             </div>
         </div>
     </div>
 
     <script>
     // Get the canvas elements
-    const ctx = document.getElementById('assetChart').getContext('2d');
+    const totalAssetsCtx = document.getElementById('totalAssetsChart').getContext('2d');
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    const realEstateCtx = document.getElementById('realEstateChart').getContext('2d');
+    const goldCtx = document.getElementById('goldChart').getContext('2d');
+    const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
+    const treasuryCtx = document.getElementById('treasuryChart').getContext('2d');
 
     // Use the JSON data correctly without re-parsing what's already JSON
     // The |safe filter prevents Django from escaping the JSON
@@ -100,222 +105,268 @@
     const goldData = {{ gold_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Original datasets with their raw values
-    const originalDatasets = [
-        {
-            ...commercialData.datasets[0],
-            id: 'commercial',
-            rawData: commercialData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index) // Store all year indices
-        },
-        {
-            ...cryptoData.datasets[0],
-            id: 'crypto',
-            rawData: cryptoData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        },
-        {
-            ...residentialData.datasets[0],
-            id: 'residential',
-            rawData: residentialData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        },
-        {
-            ...stockMarketData.datasets[0],
-            id: 'stockMarket',
-            rawData: stockMarketData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        },
-        {
-            ...treasuryData.datasets[0],
-            id: 'treasury',
-            rawData: treasuryData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        },
-        {
-            ...goldData.datasets[0],
-            id: 'gold',
-            rawData: goldData.datasets[0].data,
-            yearIndices: allYears.map((_, index) => index)
-        }
-    ];
-
-    // Create checkboxes for each dataset
-    const checkboxContainer = document.querySelector('.checkbox-container');
-    originalDatasets.forEach(dataset => {
-        const checkboxItem = document.createElement('div');
-        checkboxItem.className = 'checkbox-item';
+    // Find years where data is available for all assets
+    const validYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const allHaveData = [
+            stockMarketData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
         
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = dataset.id;
-        checkbox.checked = true;
-        checkbox.addEventListener('change', updateChart);
-        
-        const label = document.createElement('label');
-        label.htmlFor = dataset.id;
-        label.textContent = dataset.label;
-        label.style.color = dataset.borderColor;
-        
-        checkboxItem.appendChild(checkbox);
-        checkboxItem.appendChild(label);
-        checkboxContainer.appendChild(checkboxItem);
-    });
-
-    let chart;
-    let gdpChart;
-
-    // Function to update the chart based on selected checkboxes
-    function updateChart() {
-        // Get the selected datasets based on checkbox state
-        const selectedDatasets = originalDatasets.filter(dataset => 
-            document.getElementById(dataset.id).checked
-        );
-
-        // If no datasets are selected, return early to avoid division by zero
-        if (selectedDatasets.length === 0) {
-            // If chart exists, hide it
-            if (chart) {
-                chart.data.datasets = [];
-                chart.update();
-            }
-            if (gdpChart) {
-                gdpChart.data.datasets = [];
-                gdpChart.update();
-            }
-            return;
-        }
-
-        // Find years where data is available for all selected asset classes
-        const validYearIndices = [];
-        
-        for (let i = 0; i < allYears.length; i++) {
-            // Check if all selected datasets have valid data for this year
-            const allHaveData = selectedDatasets.every(dataset => {
-                const value = dataset.rawData[i];
-                // Consider the data valid if it's a number and not NaN
-                return value !== undefined && value !== null && !isNaN(value);
-            });
-            
-            if (allHaveData) {
-                validYearIndices.push(i);
-            }
-        }
-        
-        // Get the corresponding years for valid indices
-        const validYears = validYearIndices.map(index => allYears[index]);
-        
-        // Calculate total market cap for each valid year using only the selected datasets
-        const totalsByYear = validYearIndices.map(yearIndex => {
-            return selectedDatasets.reduce((total, dataset) => {
-                return total + (dataset.rawData[yearIndex] || 0);
-            }, 0);
-        });
-
-        // Convert each dataset's values to percentages of the total
-        const percentageDatasets = selectedDatasets.map(dataset => {
-            return {
-                ...dataset,
-                data: validYearIndices.map((yearIndex, index) => {
-                    // Avoid division by zero
-                    return totalsByYear[index] === 0 ? 0 : (dataset.rawData[yearIndex] / totalsByYear[index]) * 100;
-                })
-            };
-        });
-
-        // Update the first chart (percentage of total market cap)
-        if (chart) {
-            chart.data.labels = validYears;
-            chart.data.datasets = percentageDatasets;
-            chart.update();
-        } else {
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: validYears,
-                    datasets: percentageDatasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Percentage of Total Market Cap (%)'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Now, create or update the GDP percentage chart
-        // Find years where both GDP and selected assets have data
-        const gdpYearIndices = [];
-        
-        for (let i = 0; i < allYears.length; i++) {
-            // Check if GDP and all selected datasets have valid data for this year
-            const gdpValue = gdpData.datasets[0].data[i];
-            const gdpHasData = gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0;
-            
-            const allHaveData = selectedDatasets.every(dataset => {
-                const value = dataset.rawData[i];
-                return value !== undefined && value !== null && !isNaN(value);
-            });
-            
-            if (gdpHasData && allHaveData) {
-                gdpYearIndices.push(i);
-            }
-        }
-        
-        // Get the corresponding years for valid GDP indices
-        const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
-        
-        // Create datasets for GDP percentage
-        const gdpPercentageDatasets = selectedDatasets.map(dataset => {
-            return {
-                ...dataset,
-                data: gdpYearIndices.map(yearIndex => {
-                    const assetValue = dataset.rawData[yearIndex] || 0;
-                    const gdpValue = gdpData.datasets[0].data[yearIndex] || 0;
-                    // Avoid division by zero
-                    return gdpValue === 0 ? 0 : (assetValue / gdpValue) * 100;
-                })
-            };
-        });
-
-        // Update the GDP percentage chart
-        if (gdpChart) {
-            gdpChart.data.labels = gdpValidYears;
-            gdpChart.data.datasets = gdpPercentageDatasets;
-            gdpChart.update();
-        } else {
-            gdpChart = new Chart(gdpCtx, {
-                type: 'line',
-                data: {
-                    labels: gdpValidYears,
-                    datasets: gdpPercentageDatasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'Percentage of GDP (%)'
-                            }
-                        }
-                    }
-                }
-            });
+        if (allHaveData) {
+            validYearIndices.push(i);
         }
     }
 
-    // Initialize the chart with all datasets
-    updateChart();
+    // Get valid years
+    const validYears = validYearIndices.map(index => allYears[index]);
+
+    // Calculate total assets for each year
+    const totalAssetsByYear = validYearIndices.map(i => {
+        return (
+            stockMarketData.datasets[0].data[i] +
+            cryptoData.datasets[0].data[i] +
+            goldData.datasets[0].data[i] +
+            commercialData.datasets[0].data[i] +
+            residentialData.datasets[0].data[i] +
+            treasuryData.datasets[0].data[i]
+        );
+    });
+
+    // Create the total assets chart
+    const totalAssetsChart = new Chart(totalAssetsCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Total Assets (Trillion USD)',
+                data: totalAssetsByYear,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Value (Trillion USD)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Filter GDP data to only include years with actual data
+    const gdpYears = [];
+    const gdpValues = [];
+    for (let i = 0; i < allYears.length; i++) {
+        if (gdpData.datasets[0].data[i] !== null && 
+            gdpData.datasets[0].data[i] !== undefined && 
+            !isNaN(gdpData.datasets[0].data[i])) {
+            gdpYears.push(allYears[i]);
+            gdpValues.push(gdpData.datasets[0].data[i]);
+        }
+    }
+
+    // Create the GDP chart
+    const gdpChartInstance = new Chart(gdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpYears,
+            datasets: [{
+                label: 'GDP (Trillion USD)',
+                data: gdpValues,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Value (Trillion USD)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate stocks as percentage of total assets
+    const stockPercentages = validYearIndices.map(i => {
+        const total = totalAssetsByYear[validYearIndices.indexOf(i)];
+        return (stockMarketData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the stocks percentage chart
+    const stocksChart = new Chart(stocksCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Stocks % of Total Assets',
+                data: stockPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate real estate (commercial + residential) as percentage of total assets
+    const realEstatePercentages = validYearIndices.map(i => {
+        const realEstateValue = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        const total = totalAssetsByYear[validYearIndices.indexOf(i)];
+        return (realEstateValue / total) * 100;
+    });
+
+    // Create the real estate percentage chart
+    const realEstateChart = new Chart(realEstateCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Real Estate % of Total Assets',
+                data: realEstatePercentages,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate gold as percentage of total assets
+    const goldPercentages = validYearIndices.map(i => {
+        const total = totalAssetsByYear[validYearIndices.indexOf(i)];
+        return (goldData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the gold percentage chart
+    const goldChart = new Chart(goldCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Gold % of Total Assets',
+                data: goldPercentages,
+                borderColor: 'rgb(255, 215, 0)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate crypto as percentage of total assets
+    const cryptoPercentages = validYearIndices.map(i => {
+        const total = totalAssetsByYear[validYearIndices.indexOf(i)];
+        return (cryptoData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the crypto percentage chart
+    const cryptoChart = new Chart(cryptoCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Crypto % of Total Assets',
+                data: cryptoPercentages,
+                borderColor: 'rgb(54, 162, 235)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Calculate treasury bonds as percentage of total assets
+    const treasuryPercentages = validYearIndices.map(i => {
+        const total = totalAssetsByYear[validYearIndices.indexOf(i)];
+        return (treasuryData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the treasury bonds percentage chart
+    const treasuryChart = new Chart(treasuryCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Treasury Bonds % of Total Assets',
+                data: treasuryPercentages,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
     </script>
-{% endblock %} 
+{% endblock %}
