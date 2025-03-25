@@ -2,7 +2,112 @@
 
 {% block title %}Gold - AssetsUSA{% endblock %}
 
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-    <h1>Gold</h1>
-    <!-- Content will be added later -->
-{% endblock %} 
+    <div class="container">
+        <h1>Gold</h1>
+        <div>
+            <div class="chart-title">Gold as Percentage of Total Assets</div>
+            <div class="chart-container">
+                <canvas id="goldChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const ctx = document.getElementById('goldChart').getContext('2d');
+    
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const cryptoData = {{ crypto_chart_data|safe }};
+    const goldData = {{ gold_chart_data|safe }};
+    const commercialData = {{ commercial_real_estate_chart_data|safe }};
+    const residentialData = {{ residential_real_estate_chart_data|safe }};
+    const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Find years where data is available for all assets
+    const validYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const allHaveData = [
+            stockData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
+        
+        if (allHaveData) {
+            validYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and calculate gold percentages
+    const validYears = validYearIndices.map(index => allYears[index]);
+    const percentages = validYearIndices.map(i => {
+        const total = (
+            stockData.datasets[0].data[i] +
+            cryptoData.datasets[0].data[i] +
+            goldData.datasets[0].data[i] +
+            commercialData.datasets[0].data[i] +
+            residentialData.datasets[0].data[i] +
+            treasuryData.datasets[0].data[i]
+        );
+        return (goldData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the chart
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Gold % of Total Assets',
+                data: percentages,
+                borderColor: 'rgb(255, 215, 0)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+    </script>
+{% endblock %}
