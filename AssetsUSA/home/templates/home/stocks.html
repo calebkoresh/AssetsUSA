@@ -44,11 +44,18 @@
                 <canvas id="gdpChart"></canvas>
             </div>
         </div>
+        <div>
+            <div class="chart-title">S&P 500 as Percentage of Total Stock Market</div>
+            <div class="chart-container">
+                <canvas id="sp500Chart"></canvas>
+            </div>
+        </div>
     </div>
 
     <script>
     const ctx = document.getElementById('stocksChart').getContext('2d');
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    const sp500Ctx = document.getElementById('sp500Chart').getContext('2d');
     
     // Get all the asset data
     const stockData = {{ stock_market_cap_chart_data|safe }};
@@ -59,6 +66,7 @@
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const gdpData = {{ gdp_chart_data|safe }};
+    const sp500Data = {{ sp500_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Find years where data is available for all assets
@@ -163,6 +171,54 @@
                     title: {
                         display: true,
                         text: 'Percentage of GDP (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Find years where both SP500 and total stock data are available
+    const sp500YearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            sp500YearIndices.push(i);
+        }
+    }
+
+    // Calculate SP500 as percentage of total stock market
+    const sp500ValidYears = sp500YearIndices.map(index => allYears[index]);
+    const sp500Percentages = sp500YearIndices.map(i => {
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (sp500Value / stockValue) * 100;
+    });
+
+    // Create the SP500 percentage chart
+    const sp500Chart = new Chart(sp500Ctx, {
+        type: 'line',
+        data: {
+            labels: sp500ValidYears,
+            datasets: [{
+                label: 'S&P 500 % of Total Stock Market',
+                data: sp500Percentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
                     }
                 }
             }
