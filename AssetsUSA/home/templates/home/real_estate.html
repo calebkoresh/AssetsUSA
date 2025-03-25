@@ -39,9 +39,21 @@
             </div>
         </div>
         <div>
+            <div class="chart-title">Real Estate as Percentage of GDP</div>
+            <div class="chart-container">
+                <canvas id="realEstateGdpChart"></canvas>
+            </div>
+        </div>
+        <div>
             <div class="chart-title">Residential Real Estate as Percentage of Total Assets</div>
             <div class="chart-container">
                 <canvas id="residentialChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">Residential Real Estate as Percentage of GDP</div>
+            <div class="chart-container">
+                <canvas id="residentialGdpChart"></canvas>
             </div>
         </div>
         <div>
@@ -50,12 +62,21 @@
                 <canvas id="commercialChart"></canvas>
             </div>
         </div>
+        <div>
+            <div class="chart-title">Commercial Real Estate as Percentage of GDP</div>
+            <div class="chart-container">
+                <canvas id="commercialGdpChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <script>
     const realEstateCtx = document.getElementById('realEstateChart').getContext('2d');
     const residentialCtx = document.getElementById('residentialChart').getContext('2d');
     const commercialCtx = document.getElementById('commercialChart').getContext('2d');
+    const realEstateGdpCtx = document.getElementById('realEstateGdpChart').getContext('2d');
+    const residentialGdpCtx = document.getElementById('residentialGdpChart').getContext('2d');
+    const commercialGdpCtx = document.getElementById('commercialGdpChart').getContext('2d');
     
     // Get all the asset data
     const stockData = {{ stock_market_cap_chart_data|safe }};
@@ -64,6 +85,7 @@
     const commercialData = {{ commercial_real_estate_chart_data|safe }};
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Find years where data is available for all assets
@@ -198,6 +220,126 @@
                     title: {
                         display: true,
                         text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Find years where both GDP and real estate data are available
+    const gdpYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const gdpValue = gdpData.datasets[0].data[i];
+        const commercialValue = commercialData.datasets[0].data[i];
+        const residentialValue = residentialData.datasets[0].data[i];
+        const allHaveData = gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+                           commercialValue !== undefined && commercialValue !== null && !isNaN(commercialValue) &&
+                           residentialValue !== undefined && residentialValue !== null && !isNaN(residentialValue);
+        
+        if (allHaveData) {
+            gdpYearIndices.push(i);
+        }
+    }
+
+    // Calculate real estate as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    
+    // Total real estate as percentage of GDP
+    const realEstateGdpPercentages = gdpYearIndices.map(i => {
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (totalRealEstate / gdpValue) * 100;
+    });
+
+    // Residential real estate as percentage of GDP
+    const residentialGdpPercentages = gdpYearIndices.map(i => {
+        const residentialValue = residentialData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (residentialValue / gdpValue) * 100;
+    });
+
+    // Commercial real estate as percentage of GDP
+    const commercialGdpPercentages = gdpYearIndices.map(i => {
+        const commercialValue = commercialData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (commercialValue / gdpValue) * 100;
+    });
+
+    // Create the real estate as percentage of GDP chart
+    const realEstateGdpChart = new Chart(realEstateGdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Real Estate % of GDP',
+                data: realEstateGdpPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Create the residential real estate as percentage of GDP chart
+    const residentialGdpChart = new Chart(residentialGdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Residential Real Estate % of GDP',
+                data: residentialGdpPercentages,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Create the commercial real estate as percentage of GDP chart
+    const commercialGdpChart = new Chart(commercialGdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Commercial Real Estate % of GDP',
+                data: commercialGdpPercentages,
+                borderColor: 'rgb(54, 162, 235)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
                     }
                 }
             }
