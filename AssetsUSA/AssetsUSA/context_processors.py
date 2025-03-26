@@ -27,7 +27,9 @@ def asset_data(request):
         'stocks_tech',
         'stocks_utilities',
         'bitcoin',
-        'ethereum'
+        'ethereum',
+        'stocks_pe',
+        'sp500_pe'
     ]
     
     # Initialize data structure

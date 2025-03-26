@@ -57,6 +57,18 @@
             </div>
         </div>
         <div>
+            <div class="chart-title">Total Stock Market P/E Ratio</div>
+            <div class="chart-container">
+                <canvas id="stocksPEChart"></canvas>
+            </div>
+        </div>
+        <div>
+            <div class="chart-title">S&P 500 P/E Ratio</div>
+            <div class="chart-container">
+                <canvas id="sp500PEChart"></canvas>
+            </div>
+        </div>
+        <div>
             <div class="chart-title">Basic Materials as Percentage of Total Stock Market</div>
             <div class="chart-container">
                 <canvas id="basicMaterialsChart"></canvas>
@@ -129,6 +141,8 @@
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     const sp500Ctx = document.getElementById('sp500Chart').getContext('2d');
     const top20Ctx = document.getElementById('top20Chart').getContext('2d');
+    const stocksPECtx = document.getElementById('stocksPEChart').getContext('2d');
+    const sp500PECtx = document.getElementById('sp500PEChart').getContext('2d');
     const basicMaterialsCtx = document.getElementById('basicMaterialsChart').getContext('2d');
     const commServicesCtx = document.getElementById('commServicesChart').getContext('2d');
     const consumerCyclicalCtx = document.getElementById('consumerCyclicalChart').getContext('2d');
@@ -162,6 +176,8 @@
     const realEstateData = {{ stocks_real_estate_chart_data|safe }};
     const techData = {{ stocks_tech_chart_data|safe }};
     const utilitiesData = {{ stocks_utilities_chart_data|safe }};
+    const stocksPEData = {{ stocks_pe_chart_data|safe }};
+    const sp500PEData = {{ sp500_pe_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Find years where data is available for all assets
@@ -360,6 +376,90 @@
                     title: {
                         display: true,
                         text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Find years where stocks P/E data is available
+    const stocksPEYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const peValue = stocksPEData.datasets[0].data[i];
+        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        
+        if (hasData) {
+            stocksPEYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and P/E values for stocks
+    const stocksPEValidYears = stocksPEYearIndices.map(index => allYears[index]);
+    const stocksPEValues = stocksPEYearIndices.map(i => stocksPEData.datasets[0].data[i]);
+
+    // Create the stocks P/E ratio chart
+    const stocksPEChart = new Chart(stocksPECtx, {
+        type: 'line',
+        data: {
+            labels: stocksPEValidYears,
+            datasets: [{
+                label: 'Total Stock Market P/E Ratio',
+                data: stocksPEValues,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'P/E Ratio'
+                    }
+                }
+            }
+        }
+    });
+
+    // Find years where S&P 500 P/E data is available
+    const sp500PEYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const peValue = sp500PEData.datasets[0].data[i];
+        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        
+        if (hasData) {
+            sp500PEYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and P/E values for S&P 500
+    const sp500PEValidYears = sp500PEYearIndices.map(index => allYears[index]);
+    const sp500PEValues = sp500PEYearIndices.map(i => sp500PEData.datasets[0].data[i]);
+
+    // Create the S&P 500 P/E ratio chart
+    const sp500PEChart = new Chart(sp500PECtx, {
+        type: 'line',
+        data: {
+            labels: sp500PEValidYears,
+            datasets: [{
+                label: 'S&P 500 P/E Ratio',
+                data: sp500PEValues,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'P/E Ratio'
                     }
                 }
             }
