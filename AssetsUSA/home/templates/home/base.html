@@ -80,6 +80,8 @@
                 <a href="{% url 'home:home' %}">Home</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:total_assets' %}">Total Asset Pool</a>
+                    <a href="{% url 'home:gdp_chart' %}">GDP by Year</a>
                 </div>
             </div>
             
@@ -111,6 +113,12 @@
                 <a href="{% url 'home:real_estate' %}">Real Estate</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:real_estate_percentage' %}">Real Estate % of Total Assets</a>
+                    <a href="{% url 'home:real_estate_gdp' %}">Real Estate % of GDP</a>
+                    <a href="{% url 'home:residential_real_estate_percentage' %}">Residential Real Estate % of Total Assets</a>
+                    <a href="{% url 'home:residential_real_estate_gdp' %}">Residential Real Estate % of GDP</a>
+                    <a href="{% url 'home:commercial_real_estate_percentage' %}">Commercial Real Estate % of Total Assets</a>
+                    <a href="{% url 'home:commercial_real_estate_gdp' %}">Commercial Real Estate % of GDP</a>
                 </div>
             </div>
             
@@ -118,6 +126,10 @@
                 <a href="{% url 'home:crypto' %}">Crypto</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:crypto_percentage' %}">Cryptocurrency % of Total Assets</a>
+                    <a href="{% url 'home:bitcoin_percentage' %}">Bitcoin % of Crypto Market Cap</a>
+                    <a href="{% url 'home:ethereum_percentage' %}">Ethereum % of Crypto Market Cap</a>
+                    <a href="{% url 'home:other_crypto_percentage' %}">Other Cryptocurrencies % of Crypto Market Cap</a>
                 </div>
             </div>
             
@@ -125,6 +137,7 @@
                 <a href="{% url 'home:gold' %}">Gold</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:gold_percentage' %}">Gold % of Total Assets</a>
                 </div>
             </div>
             
@@ -132,6 +145,7 @@
                 <a href="{% url 'home:treasury_bonds' %}">Treasury Bonds</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:treasury_bonds_percentage' %}">Treasury Bonds % of Total Assets</a>
                 </div>
             </div>
         </nav>

@@ -96,3 +96,59 @@ def technology_percentage(request):
 def utilities_percentage(request):
     """View function for the Utilities as Percentage of Total Stock Market page."""
     return render(request, 'home/utilities_percentage.html')
+
+def total_assets(request):
+    """View function for the Total Asset Pool page."""
+    return render(request, 'home/total_assets.html')
+
+def gdp_chart(request):
+    """View function for the GDP by Year page."""
+    return render(request, 'home/gdp_chart.html')
+
+def real_estate_percentage(request):
+    """View function for the Real Estate as Percentage of Total Assets page."""
+    return render(request, 'home/real_estate_percentage.html')
+
+def real_estate_gdp(request):
+    """View function for the Real Estate as Percentage of GDP page."""
+    return render(request, 'home/real_estate_gdp.html')
+
+def residential_real_estate_percentage(request):
+    """View function for the Residential Real Estate as Percentage of Total Assets page."""
+    return render(request, 'home/residential_real_estate_percentage.html')
+
+def residential_real_estate_gdp(request):
+    """View function for the Residential Real Estate as Percentage of GDP page."""
+    return render(request, 'home/residential_real_estate_gdp.html')
+
+def commercial_real_estate_percentage(request):
+    """View function for the Commercial Real Estate as Percentage of Total Assets page."""
+    return render(request, 'home/commercial_real_estate_percentage.html')
+
+def commercial_real_estate_gdp(request):
+    """View function for the Commercial Real Estate as Percentage of GDP page."""
+    return render(request, 'home/commercial_real_estate_gdp.html')
+
+def crypto_percentage(request):
+    """View function for the Cryptocurrency as Percentage of Total Assets page."""
+    return render(request, 'home/crypto_percentage.html')
+
+def bitcoin_percentage(request):
+    """View function for the Bitcoin as Percentage of Crypto Market Cap page."""
+    return render(request, 'home/bitcoin_percentage.html')
+
+def ethereum_percentage(request):
+    """View function for the Ethereum as Percentage of Crypto Market Cap page."""
+    return render(request, 'home/ethereum_percentage.html')
+
+def other_crypto_percentage(request):
+    """View function for the Other Cryptocurrencies as Percentage of Crypto Market Cap page."""
+    return render(request, 'home/other_crypto_percentage.html')
+
+def gold_percentage(request):
+    """View function for the Gold as Percentage of Total Assets page."""
+    return render(request, 'home/gold_percentage.html')
+
+def treasury_bonds_percentage(request):
+    """View function for the Treasury Bonds as Percentage of Total Assets page."""
+    return render(request, 'home/treasury_bonds_percentage.html')
