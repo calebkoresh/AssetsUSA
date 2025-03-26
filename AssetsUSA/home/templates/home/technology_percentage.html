@@ -1,0 +1,355 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Technology as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Technology as Percentage of Total Stock Market</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="technologyChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Communication Services % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="communicationServicesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Financial Services % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="financialServicesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Healthcare % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="healthcareChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const techData = {{ stocks_tech_chart_data|safe }};
+    const communicationServicesData = {{ stocks_comm_services_chart_data|safe }};
+    const financialServicesData = {{ stocks_financial_services_chart_data|safe }};
+    const healthcareData = {{ stocks_healthcare_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Technology as Percentage of Total Stock Market Chart (Main Chart)
+    const technologyCtx = document.getElementById('technologyChart').getContext('2d');
+    
+    // Find years where both Technology and total stock data are available
+    const technologyYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const technologyValue = techData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = technologyValue !== undefined && technologyValue !== null && !isNaN(technologyValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            technologyYearIndices.push(i);
+        }
+    }
+
+    // Calculate Technology as percentage of total stock market
+    const technologyValidYears = technologyYearIndices.map(index => allYears[index]);
+    const technologyPercentages = technologyYearIndices.map(i => {
+        const technologyValue = techData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (technologyValue / stockValue) * 100;
+    });
+
+    // Create the Technology percentage chart
+    const technologyChart = new Chart(technologyCtx, {
+        type: 'line',
+        data: {
+            labels: technologyValidYears,
+            datasets: [{
+                label: 'Technology % of Total Stock Market',
+                data: technologyPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Communication Services as Percentage of Total Stock Market Chart
+    const communicationServicesCtx = document.getElementById('communicationServicesChart').getContext('2d');
+    
+    // Find years where both Communication Services and total stock data are available
+    const communicationServicesYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const communicationServicesValue = communicationServicesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = communicationServicesValue !== undefined && communicationServicesValue !== null && !isNaN(communicationServicesValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            communicationServicesYearIndices.push(i);
+        }
+    }
+
+    // Calculate Communication Services as percentage of total stock market
+    const communicationServicesValidYears = communicationServicesYearIndices.map(index => allYears[index]);
+    const communicationServicesPercentages = communicationServicesYearIndices.map(i => {
+        const communicationServicesValue = communicationServicesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (communicationServicesValue / stockValue) * 100;
+    });
+
+    // Create the Communication Services percentage chart
+    const communicationServicesChart = new Chart(communicationServicesCtx, {
+        type: 'line',
+        data: {
+            labels: communicationServicesValidYears,
+            datasets: [{
+                label: 'Communication Services % of Total Stock Market',
+                data: communicationServicesPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Financial Services as Percentage of Total Stock Market Chart
+    const financialServicesCtx = document.getElementById('financialServicesChart').getContext('2d');
+    
+    // Find years where both Financial Services and total stock data are available
+    const financialServicesYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const financialServicesValue = financialServicesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = financialServicesValue !== undefined && financialServicesValue !== null && !isNaN(financialServicesValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            financialServicesYearIndices.push(i);
+        }
+    }
+
+    // Calculate Financial Services as percentage of total stock market
+    const financialServicesValidYears = financialServicesYearIndices.map(index => allYears[index]);
+    const financialServicesPercentages = financialServicesYearIndices.map(i => {
+        const financialServicesValue = financialServicesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (financialServicesValue / stockValue) * 100;
+    });
+
+    // Create the Financial Services percentage chart
+    const financialServicesChart = new Chart(financialServicesCtx, {
+        type: 'line',
+        data: {
+            labels: financialServicesValidYears,
+            datasets: [{
+                label: 'Financial Services % of Total Stock Market',
+                data: financialServicesPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Healthcare as Percentage of Total Stock Market Chart
+    const healthcareCtx = document.getElementById('healthcareChart').getContext('2d');
+    
+    // Find years where both Healthcare and total stock data are available
+    const healthcareYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const healthcareValue = healthcareData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = healthcareValue !== undefined && healthcareValue !== null && !isNaN(healthcareValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            healthcareYearIndices.push(i);
+        }
+    }
+
+    // Calculate Healthcare as percentage of total stock market
+    const healthcareValidYears = healthcareYearIndices.map(index => allYears[index]);
+    const healthcarePercentages = healthcareYearIndices.map(i => {
+        const healthcareValue = healthcareData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (healthcareValue / stockValue) * 100;
+    });
+
+    // Create the Healthcare percentage chart
+    const healthcareChart = new Chart(healthcareCtx, {
+        type: 'line',
+        data: {
+            labels: healthcareValidYears,
+            datasets: [{
+                label: 'Healthcare % of Total Stock Market',
+                data: healthcarePercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 

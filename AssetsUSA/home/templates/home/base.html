@@ -21,19 +21,54 @@
             justify-content: center;
             flex-wrap: wrap;
         }
-        .nav a {
+        .nav-item {
+            position: relative;
+            margin: 0 15px;
+        }
+        .nav-item > a {
             color: white;
             text-decoration: none;
-            margin: 0 15px;
             font-family: Arial, sans-serif;
             font-weight: bold;
+            padding: 10px 0;
+            display: inline-block;
         }
-        .nav a:hover {
+        .nav-item:hover > a {
             text-decoration: underline;
         }
+        
+        /* Dropdown menu styling */
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #444;
+            min-width: 180px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1001;
+            border-radius: 4px;
+            padding: 8px 0;
+        }
+        .nav-item:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            display: block;
+            font-family: Arial, sans-serif;
+        }
+        .dropdown a:hover {
+            background-color: #555;
+        }
+        
         /* Add some padding to the body to prevent content from hiding under the header */
         body {
             padding-top: 60px;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
     </style>
     {% block extra_head %}{% endblock %}
@@ -41,12 +76,64 @@
 <body>
     <header class="header">
         <nav class="nav">
-            <a href="{% url 'home:home' %}">Home</a>
-            <a href="{% url 'home:stocks' %}">Stocks</a>
-            <a href="{% url 'home:real_estate' %}">Real Estate</a>
-            <a href="{% url 'home:crypto' %}">Crypto</a>
-            <a href="{% url 'home:gold' %}">Gold</a>
-            <a href="{% url 'home:treasury_bonds' %}">Treasury Bonds</a>
+            <div class="nav-item">
+                <a href="{% url 'home:home' %}">Home</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{% url 'home:stocks' %}">Stocks</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                    <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
+                    <a href="{% url 'home:stocks_pe_ratio' %}">Total Stock Market PE Ratio</a>
+                    <a href="{% url 'home:stocks_percentage' %}">Stocks % of Total Assets</a>
+                    <a href="{% url 'home:stocks_gdp' %}">Stocks % of GDP</a>
+                    <a href="{% url 'home:sp500_percentage' %}">S&P 500 % of Stock Market</a>
+                    <a href="{% url 'home:top20_percentage' %}">Top 20 Stocks % of Stock Market</a>
+                    <a href="{% url 'home:basic_materials_percentage' %}">Basic Materials % of Stock Market</a>
+                    <a href="{% url 'home:communication_services_percentage' %}">Communication Services % of Stock Market</a>
+                    <a href="{% url 'home:consumer_cyclical_percentage' %}">Consumer Cyclical % of Stock Market</a>
+                    <a href="{% url 'home:consumer_defensive_percentage' %}">Consumer Defensive % of Stock Market</a>
+                    <a href="{% url 'home:energy_percentage' %}">Energy % of Stock Market</a>
+                    <a href="{% url 'home:financial_services_percentage' %}">Financial Services % of Stock Market</a>
+                    <a href="{% url 'home:healthcare_percentage' %}">Healthcare % of Stock Market</a>
+                    <a href="{% url 'home:industrials_percentage' %}">Industrials % of Stock Market</a>
+                    <a href="{% url 'home:real_estate_sector_percentage' %}">Real Estate % of Stock Market</a>
+                    <a href="{% url 'home:technology_percentage' %}">Technology % of Stock Market</a>
+                    <a href="{% url 'home:utilities_percentage' %}">Utilities % of Stock Market</a>
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{% url 'home:real_estate' %}">Real Estate</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{% url 'home:crypto' %}">Crypto</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{% url 'home:gold' %}">Gold</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                </div>
+            </div>
+            
+            <div class="nav-item">
+                <a href="{% url 'home:treasury_bonds' %}">Treasury Bonds</a>
+                <div class="dropdown">
+                    <!-- Links will go here -->
+                </div>
+            </div>
         </nav>
     </header>
 

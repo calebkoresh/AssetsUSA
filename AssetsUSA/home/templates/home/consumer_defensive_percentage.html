@@ -1,0 +1,355 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Consumer Defensive as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Consumer Defensive as Percentage of Total Stock Market</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="consumerDefensiveChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Consumer Cyclical % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="consumerCyclicalChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Healthcare % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="healthcareChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Utilities % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="utilitiesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const consumerDefensiveData = {{ stocks_consumer_defensive_chart_data|safe }};
+    const consumerCyclicalData = {{ stocks_consumer_cyclical_chart_data|safe }};
+    const healthcareData = {{ stocks_healthcare_chart_data|safe }};
+    const utilitiesData = {{ stocks_utilities_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Consumer Defensive as Percentage of Total Stock Market Chart (Main Chart)
+    const consumerDefensiveCtx = document.getElementById('consumerDefensiveChart').getContext('2d');
+    
+    // Find years where both Consumer Defensive and total stock data are available
+    const consumerDefensiveYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const consumerDefensiveValue = consumerDefensiveData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = consumerDefensiveValue !== undefined && consumerDefensiveValue !== null && !isNaN(consumerDefensiveValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            consumerDefensiveYearIndices.push(i);
+        }
+    }
+
+    // Calculate Consumer Defensive as percentage of total stock market
+    const consumerDefensiveValidYears = consumerDefensiveYearIndices.map(index => allYears[index]);
+    const consumerDefensivePercentages = consumerDefensiveYearIndices.map(i => {
+        const consumerDefensiveValue = consumerDefensiveData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (consumerDefensiveValue / stockValue) * 100;
+    });
+
+    // Create the Consumer Defensive percentage chart
+    const consumerDefensiveChart = new Chart(consumerDefensiveCtx, {
+        type: 'line',
+        data: {
+            labels: consumerDefensiveValidYears,
+            datasets: [{
+                label: 'Consumer Defensive % of Total Stock Market',
+                data: consumerDefensivePercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Consumer Cyclical as Percentage of Total Stock Market Chart
+    const consumerCyclicalCtx = document.getElementById('consumerCyclicalChart').getContext('2d');
+    
+    // Find years where both Consumer Cyclical and total stock data are available
+    const consumerCyclicalYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const consumerCyclicalValue = consumerCyclicalData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = consumerCyclicalValue !== undefined && consumerCyclicalValue !== null && !isNaN(consumerCyclicalValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            consumerCyclicalYearIndices.push(i);
+        }
+    }
+
+    // Calculate Consumer Cyclical as percentage of total stock market
+    const consumerCyclicalValidYears = consumerCyclicalYearIndices.map(index => allYears[index]);
+    const consumerCyclicalPercentages = consumerCyclicalYearIndices.map(i => {
+        const consumerCyclicalValue = consumerCyclicalData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (consumerCyclicalValue / stockValue) * 100;
+    });
+
+    // Create the Consumer Cyclical percentage chart
+    const consumerCyclicalChart = new Chart(consumerCyclicalCtx, {
+        type: 'line',
+        data: {
+            labels: consumerCyclicalValidYears,
+            datasets: [{
+                label: 'Consumer Cyclical % of Total Stock Market',
+                data: consumerCyclicalPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Healthcare as Percentage of Total Stock Market Chart
+    const healthcareCtx = document.getElementById('healthcareChart').getContext('2d');
+    
+    // Find years where both Healthcare and total stock data are available
+    const healthcareYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const healthcareValue = healthcareData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = healthcareValue !== undefined && healthcareValue !== null && !isNaN(healthcareValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            healthcareYearIndices.push(i);
+        }
+    }
+
+    // Calculate Healthcare as percentage of total stock market
+    const healthcareValidYears = healthcareYearIndices.map(index => allYears[index]);
+    const healthcarePercentages = healthcareYearIndices.map(i => {
+        const healthcareValue = healthcareData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (healthcareValue / stockValue) * 100;
+    });
+
+    // Create the Healthcare percentage chart
+    const healthcareChart = new Chart(healthcareCtx, {
+        type: 'line',
+        data: {
+            labels: healthcareValidYears,
+            datasets: [{
+                label: 'Healthcare % of Total Stock Market',
+                data: healthcarePercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Utilities as Percentage of Total Stock Market Chart
+    const utilitiesCtx = document.getElementById('utilitiesChart').getContext('2d');
+    
+    // Find years where both Utilities and total stock data are available
+    const utilitiesYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const utilitiesValue = utilitiesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = utilitiesValue !== undefined && utilitiesValue !== null && !isNaN(utilitiesValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            utilitiesYearIndices.push(i);
+        }
+    }
+
+    // Calculate Utilities as percentage of total stock market
+    const utilitiesValidYears = utilitiesYearIndices.map(index => allYears[index]);
+    const utilitiesPercentages = utilitiesYearIndices.map(i => {
+        const utilitiesValue = utilitiesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (utilitiesValue / stockValue) * 100;
+    });
+
+    // Create the Utilities percentage chart
+    const utilitiesChart = new Chart(utilitiesCtx, {
+        type: 'line',
+        data: {
+            labels: utilitiesValidYears,
+            datasets: [{
+                label: 'Utilities % of Total Stock Market',
+                data: utilitiesPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 

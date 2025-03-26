@@ -1,0 +1,355 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Energy as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Energy as Percentage of Total Stock Market</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="energyChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Basic Materials % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="basicMaterialsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Industrials % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="industrialsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Utilities % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="utilitiesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const energyData = {{ stocks_energy_chart_data|safe }};
+    const basicMaterialsData = {{ stocks_basic_materials_chart_data|safe }};
+    const industrialsData = {{ stocks_industrials_chart_data|safe }};
+    const utilitiesData = {{ stocks_utilities_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Energy as Percentage of Total Stock Market Chart (Main Chart)
+    const energyCtx = document.getElementById('energyChart').getContext('2d');
+    
+    // Find years where both Energy and total stock data are available
+    const energyYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const energyValue = energyData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = energyValue !== undefined && energyValue !== null && !isNaN(energyValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            energyYearIndices.push(i);
+        }
+    }
+
+    // Calculate Energy as percentage of total stock market
+    const energyValidYears = energyYearIndices.map(index => allYears[index]);
+    const energyPercentages = energyYearIndices.map(i => {
+        const energyValue = energyData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (energyValue / stockValue) * 100;
+    });
+
+    // Create the Energy percentage chart
+    const energyChart = new Chart(energyCtx, {
+        type: 'line',
+        data: {
+            labels: energyValidYears,
+            datasets: [{
+                label: 'Energy % of Total Stock Market',
+                data: energyPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Basic Materials as Percentage of Total Stock Market Chart
+    const basicMaterialsCtx = document.getElementById('basicMaterialsChart').getContext('2d');
+    
+    // Find years where both Basic Materials and total stock data are available
+    const basicMaterialsYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const basicMaterialsValue = basicMaterialsData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = basicMaterialsValue !== undefined && basicMaterialsValue !== null && !isNaN(basicMaterialsValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            basicMaterialsYearIndices.push(i);
+        }
+    }
+
+    // Calculate Basic Materials as percentage of total stock market
+    const basicMaterialsValidYears = basicMaterialsYearIndices.map(index => allYears[index]);
+    const basicMaterialsPercentages = basicMaterialsYearIndices.map(i => {
+        const basicMaterialsValue = basicMaterialsData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (basicMaterialsValue / stockValue) * 100;
+    });
+
+    // Create the Basic Materials percentage chart
+    const basicMaterialsChart = new Chart(basicMaterialsCtx, {
+        type: 'line',
+        data: {
+            labels: basicMaterialsValidYears,
+            datasets: [{
+                label: 'Basic Materials % of Total Stock Market',
+                data: basicMaterialsPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Industrials as Percentage of Total Stock Market Chart
+    const industrialsCtx = document.getElementById('industrialsChart').getContext('2d');
+    
+    // Find years where both Industrials and total stock data are available
+    const industrialsYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const industrialsValue = industrialsData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = industrialsValue !== undefined && industrialsValue !== null && !isNaN(industrialsValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            industrialsYearIndices.push(i);
+        }
+    }
+
+    // Calculate Industrials as percentage of total stock market
+    const industrialsValidYears = industrialsYearIndices.map(index => allYears[index]);
+    const industrialsPercentages = industrialsYearIndices.map(i => {
+        const industrialsValue = industrialsData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (industrialsValue / stockValue) * 100;
+    });
+
+    // Create the Industrials percentage chart
+    const industrialsChart = new Chart(industrialsCtx, {
+        type: 'line',
+        data: {
+            labels: industrialsValidYears,
+            datasets: [{
+                label: 'Industrials % of Total Stock Market',
+                data: industrialsPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Utilities as Percentage of Total Stock Market Chart
+    const utilitiesCtx = document.getElementById('utilitiesChart').getContext('2d');
+    
+    // Find years where both Utilities and total stock data are available
+    const utilitiesYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const utilitiesValue = utilitiesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        const bothHaveData = utilitiesValue !== undefined && utilitiesValue !== null && !isNaN(utilitiesValue) &&
+                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        
+        if (bothHaveData) {
+            utilitiesYearIndices.push(i);
+        }
+    }
+
+    // Calculate Utilities as percentage of total stock market
+    const utilitiesValidYears = utilitiesYearIndices.map(index => allYears[index]);
+    const utilitiesPercentages = utilitiesYearIndices.map(i => {
+        const utilitiesValue = utilitiesData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (utilitiesValue / stockValue) * 100;
+    });
+
+    // Create the Utilities percentage chart
+    const utilitiesChart = new Chart(utilitiesCtx, {
+        type: 'line',
+        data: {
+            labels: utilitiesValidYears,
+            datasets: [{
+                label: 'Utilities % of Total Stock Market',
+                data: utilitiesPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 
