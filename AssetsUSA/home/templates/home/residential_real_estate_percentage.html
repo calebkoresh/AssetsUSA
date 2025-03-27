@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Residential Real Estate % of Total Assets - AssetsUSA{% endblock %}
+{% block title %}Residential Real Estate % of Total Real Estate - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Residential Real Estate % of Total Assets</h1>
+        <h1>Residential Real Estate % of Total Real Estate</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -76,7 +76,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Commercial Real Estate % of Total Assets</div>
+                <div class="chart-title">Commercial Real Estate % of Total Real Estate</div>
                 <div class="recommended-chart-container">
                     <canvas id="commercialChart"></canvas>
                 </div>
@@ -102,19 +102,15 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Find years where data is available for all assets
+    // Find years where both commercial and residential real estate data are available
     const validYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const allHaveData = [
-            stockData.datasets[0].data[i],
-            cryptoData.datasets[0].data[i],
-            goldData.datasets[0].data[i],
+        const bothHaveData = [
             commercialData.datasets[0].data[i],
-            residentialData.datasets[0].data[i],
-            treasuryData.datasets[0].data[i]
+            residentialData.datasets[0].data[i]
         ].every(value => value !== null && value !== undefined && !isNaN(value));
         
-        if (allHaveData) {
+        if (bothHaveData) {
             validYearIndices.push(i);
         }
     }
@@ -122,17 +118,13 @@
     // Get valid years
     const validYears = validYearIndices.map(index => allYears[index]);
 
-    // Calculate residential real estate percentages (Main Chart)
+    // Calculate residential real estate percentages of total real estate (Main Chart)
     const residentialPercentages = validYearIndices.map(i => {
-        const total = (
-            stockData.datasets[0].data[i] +
-            cryptoData.datasets[0].data[i] +
-            goldData.datasets[0].data[i] +
+        const totalRealEstate = (
             commercialData.datasets[0].data[i] +
-            residentialData.datasets[0].data[i] +
-            treasuryData.datasets[0].data[i]
+            residentialData.datasets[0].data[i]
         );
-        return (residentialData.datasets[0].data[i] / total) * 100;
+        return (residentialData.datasets[0].data[i] / totalRealEstate) * 100;
     });
 
     // Create the residential real estate chart (Main Chart)
@@ -142,7 +134,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Residential Real Estate % of Total Assets',
+                label: 'Residential Real Estate % of Total Real Estate',
                 data: residentialPercentages,
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
@@ -156,15 +148,32 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Assets (%)'
+                        text: 'Percentage of Total Real Estate (%)'
                     }
                 }
             }
         }
     });
 
+    // Find years where all asset data is available for the total assets chart
+    const allAssetsYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const allHaveData = [
+            stockData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
+        
+        if (allHaveData) {
+            allAssetsYearIndices.push(i);
+        }
+    }
+
     // Calculate total real estate percentages for the recommended chart
-    const realEstatePercentages = validYearIndices.map(i => {
+    const realEstatePercentages = allAssetsYearIndices.map(i => {
         const total = (
             stockData.datasets[0].data[i] +
             cryptoData.datasets[0].data[i] +
@@ -181,7 +190,7 @@
     const realEstateChart = new Chart(realEstateCtx, {
         type: 'line',
         data: {
-            labels: validYears,
+            labels: allAssetsYearIndices.map(index => allYears[index]),
             datasets: [{
                 label: 'Real Estate % of Total Assets',
                 data: realEstatePercentages,
@@ -220,17 +229,13 @@
         }
     });
 
-    // Calculate commercial real estate percentages
+    // Calculate commercial real estate percentages of total real estate
     const commercialPercentages = validYearIndices.map(i => {
-        const total = (
-            stockData.datasets[0].data[i] +
-            cryptoData.datasets[0].data[i] +
-            goldData.datasets[0].data[i] +
+        const totalRealEstate = (
             commercialData.datasets[0].data[i] +
-            residentialData.datasets[0].data[i] +
-            treasuryData.datasets[0].data[i]
+            residentialData.datasets[0].data[i]
         );
-        return (commercialData.datasets[0].data[i] / total) * 100;
+        return (commercialData.datasets[0].data[i] / totalRealEstate) * 100;
     });
 
     // Create the commercial real estate chart
@@ -240,7 +245,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Commercial Real Estate % of Total Assets',
+                label: 'Commercial Real Estate % of Total Real Estate',
                 data: commercialPercentages,
                 borderColor: 'rgb(54, 162, 235)',
                 tension: 0.1
@@ -254,7 +259,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Assets (%)'
+                        text: 'Percentage of Total Real Estate (%)'
                     }
                 }
             },

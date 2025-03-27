@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Commercial Real Estate % of Total Assets - AssetsUSA{% endblock %}
+{% block title %}Commercial Real Estate % of Total Real Estate - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Commercial Real Estate % of Total Assets</h1>
+        <h1>Commercial Real Estate % of Total Real Estate</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -76,7 +76,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Residential Real Estate % of Total Assets</div>
+                <div class="chart-title">Residential Real Estate % of Total Real Estate</div>
                 <div class="recommended-chart-container">
                     <canvas id="residentialChart"></canvas>
                 </div>
@@ -122,17 +122,10 @@
     // Get valid years
     const validYears = validYearIndices.map(index => allYears[index]);
 
-    // Calculate commercial real estate percentages (Main Chart)
+    // Calculate commercial real estate percentages of total real estate (Main Chart)
     const commercialPercentages = validYearIndices.map(i => {
-        const total = (
-            stockData.datasets[0].data[i] +
-            cryptoData.datasets[0].data[i] +
-            goldData.datasets[0].data[i] +
-            commercialData.datasets[0].data[i] +
-            residentialData.datasets[0].data[i] +
-            treasuryData.datasets[0].data[i]
-        );
-        return (commercialData.datasets[0].data[i] / total) * 100;
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        return (commercialData.datasets[0].data[i] / totalRealEstate) * 100;
     });
 
     // Create the commercial real estate chart (Main Chart)
@@ -142,7 +135,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Commercial Real Estate % of Total Assets',
+                label: 'Commercial Real Estate % of Total Real Estate',
                 data: commercialPercentages,
                 borderColor: 'rgb(54, 162, 235)',
                 tension: 0.1
@@ -156,7 +149,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Assets (%)'
+                        text: 'Percentage of Total Real Estate (%)'
                     }
                 }
             }
@@ -220,17 +213,10 @@
         }
     });
 
-    // Calculate residential real estate percentages
+    // Calculate residential real estate percentages of total real estate
     const residentialPercentages = validYearIndices.map(i => {
-        const total = (
-            stockData.datasets[0].data[i] +
-            cryptoData.datasets[0].data[i] +
-            goldData.datasets[0].data[i] +
-            commercialData.datasets[0].data[i] +
-            residentialData.datasets[0].data[i] +
-            treasuryData.datasets[0].data[i]
-        );
-        return (residentialData.datasets[0].data[i] / total) * 100;
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        return (residentialData.datasets[0].data[i] / totalRealEstate) * 100;
     });
 
     // Create the residential real estate chart
@@ -240,7 +226,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Residential Real Estate % of Total Assets',
+                label: 'Residential Real Estate % of Total Real Estate',
                 data: residentialPercentages,
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
@@ -254,7 +240,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Assets (%)'
+                        text: 'Percentage of Total Real Estate (%)'
                     }
                 }
             },
