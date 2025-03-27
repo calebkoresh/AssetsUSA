@@ -50,9 +50,31 @@
             border-radius: 4px;
             padding: 8px 0;
         }
+        
+        /* Two-column dropdown for stocks section */
+        .stocks-dropdown {
+            width: 400px; /* Fixed width for better control */
+            display: none; /* Initially hidden like all dropdowns */
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        
+        .stocks-dropdown a {
+            width: 50%; /* Each link takes half the width */
+            box-sizing: border-box;
+        }
+        
+        /* Show dropdown on hover */
         .nav-item:hover .dropdown {
             display: block;
         }
+        
+        /* Special handling for stocks dropdown */
+        .nav-item:hover .stocks-dropdown {
+            display: flex;
+        }
+        
         .dropdown a {
             color: white;
             text-decoration: none;
@@ -60,6 +82,7 @@
             display: block;
             font-family: Arial, sans-serif;
         }
+        
         .dropdown a:hover {
             background-color: #555;
         }
@@ -87,7 +110,7 @@
             
             <div class="nav-item">
                 <a href="{% url 'home:stocks' %}">Stocks</a>
-                <div class="dropdown">
+                <div class="dropdown stocks-dropdown">
                     <!-- Links will go here -->
                     <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
                     <a href="{% url 'home:sp500_market_cap' %}">S&P 500 Market Cap</a>
