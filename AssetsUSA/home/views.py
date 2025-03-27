@@ -176,3 +176,67 @@ def commercial_real_estate_market_cap(request):
 def gold_market_cap(request):
     """View function for the Gold Market Cap page."""
     return render(request, 'home/gold_market_cap.html')
+
+def treasury_bonds_market_cap(request):
+    """View function for the Treasury Bonds Market Cap page."""
+    return render(request, 'home/treasury_bonds_market_cap.html')
+
+def crypto_market_cap(request):
+    """View function for the Cryptocurrency Market Cap page."""
+    return render(request, 'home/crypto_market_cap.html')
+
+def bitcoin_market_cap(request):
+    """View function for the Bitcoin Market Cap page."""
+    return render(request, 'home/bitcoin_market_cap.html')
+
+def ethereum_market_cap(request):
+    """View function for the Ethereum Market Cap page."""
+    return render(request, 'home/ethereum_market_cap.html')
+
+def other_crypto_market_cap(request):
+    """View function for the Other Cryptocurrencies Market Cap page."""
+    return render(request, 'home/other_crypto_market_cap.html')
+
+def top20_stocks_market_cap(request):
+    """View function for the Top 20 Stocks Market Cap page."""
+    return render(request, 'home/top20_stocks_market_cap.html')
+
+def basic_materials_market_cap(request):
+    """View function for the Basic Materials Market Cap page."""
+    return render(request, 'home/basic_materials_market_cap.html')
+
+def communication_services_market_cap(request):
+    """View function for the Communication Services Market Cap page."""
+    return render(request, 'home/communication_services_market_cap.html')
+
+def consumer_defensive_market_cap(request):
+    """View function for the Consumer Defensive Market Cap page."""
+    return render(request, 'home/consumer_defensive_market_cap.html')
+
+def energy_market_cap(request):
+    """View function for the Energy Market Cap page."""
+    return render(request, 'home/energy_market_cap.html')
+
+def financial_services_market_cap(request):
+    """View function for the Financial Services Market Cap page."""
+    return render(request, 'home/financial_services_market_cap.html')
+
+def healthcare_market_cap(request):
+    """View function for the Healthcare Market Cap page."""
+    return render(request, 'home/healthcare_market_cap.html')
+
+def industrials_market_cap(request):
+    """View function for the Industrials Market Cap page."""
+    return render(request, 'home/industrials_market_cap.html')
+
+def real_estate_sector_market_cap(request):
+    """View function for the Real Estate Sector Market Cap page."""
+    return render(request, 'home/real_estate_sector_market_cap.html')
+
+def technology_market_cap(request):
+    """View function for the Technology Market Cap page."""
+    return render(request, 'home/technology_market_cap.html')
+
+def utilities_market_cap(request):
+    """View function for the Utilities Market Cap page."""
+    return render(request, 'home/utilities_market_cap.html')

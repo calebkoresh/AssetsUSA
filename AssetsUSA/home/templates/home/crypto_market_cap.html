@@ -1,0 +1,366 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Crypto Market Cap - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Cryptocurrency Market Cap</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="cryptoMarketCapChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Crypto % of GDP</div>
+                <div class="recommended-chart-container">
+                    <canvas id="gdpChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Crypto % of Total Assets</div>
+                <div class="recommended-chart-container">
+                    <canvas id="assetsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Bitcoin % of Crypto Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="bitcoinChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const cryptoData = {{ crypto_chart_data|safe }};
+    const goldData = {{ gold_chart_data|safe }};
+    const commercialData = {{ commercial_real_estate_chart_data|safe }};
+    const residentialData = {{ residential_real_estate_chart_data|safe }};
+    const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const gdpData = {{ gdp_chart_data|safe }};
+    const bitcoinData = {{ bitcoin_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Find years where crypto data is available
+    const cryptoYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const hasData = 
+            cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue);
+        
+        if (hasData) {
+            cryptoYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and crypto market cap values
+    const validYears = cryptoYearIndices.map(index => allYears[index]);
+    const cryptoValues = cryptoYearIndices.map(i => {
+        return cryptoData.datasets[0].data[i];
+    });
+
+    // Create the crypto market cap chart
+    const cryptoMarketCapCtx = document.getElementById('cryptoMarketCapChart').getContext('2d');
+    const cryptoMarketCapChart = new Chart(cryptoMarketCapCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Cryptocurrency Market Cap (Trillion USD)',
+                data: cryptoValues,  // Data is already in trillions
+                borderColor: 'rgb(153, 102, 255)',
+                backgroundColor: 'rgba(153, 102, 255, 0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap (Trillion USD)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Crypto as Percentage of GDP Chart
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    
+    // Find years where both GDP and crypto data are available
+    const gdpYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const gdpValue = gdpData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const allHaveData = 
+            gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+            cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue);
+        
+        if (allHaveData) {
+            gdpYearIndices.push(i);
+        }
+    }
+
+    // Calculate crypto as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    const gdpPercentages = gdpYearIndices.map(i => {
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (cryptoValue / gdpValue) * 100;
+    });
+
+    // Create the GDP percentage chart
+    const gdpChart = new Chart(gdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Crypto % of GDP',
+                data: gdpPercentages,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Crypto as Percentage of Total Assets Chart
+    const assetsCtx = document.getElementById('assetsChart').getContext('2d');
+    
+    // Find years where data is available for all assets
+    const assetYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const allHaveData = [
+            stockData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
+        
+        if (allHaveData) {
+            assetYearIndices.push(i);
+        }
+    }
+
+    // Calculate crypto as percentage of total assets
+    const assetValidYears = assetYearIndices.map(index => allYears[index]);
+    const assetPercentages = assetYearIndices.map(i => {
+        const total = (
+            stockData.datasets[0].data[i] +
+            cryptoData.datasets[0].data[i] +
+            goldData.datasets[0].data[i] +
+            commercialData.datasets[0].data[i] +
+            residentialData.datasets[0].data[i] +
+            treasuryData.datasets[0].data[i]
+        );
+        return (cryptoData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the asset percentage chart
+    const assetsChart = new Chart(assetsCtx, {
+        type: 'line',
+        data: {
+            labels: assetValidYears,
+            datasets: [{
+                label: 'Crypto % of Total Assets',
+                data: assetPercentages,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Bitcoin as Percentage of Crypto Market Chart
+    const bitcoinCtx = document.getElementById('bitcoinChart').getContext('2d');
+    
+    // Find years where both bitcoin and total crypto data are available
+    const bitcoinYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const bitcoinValue = bitcoinData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const bothHaveData = 
+            bitcoinValue !== undefined && bitcoinValue !== null && !isNaN(bitcoinValue) &&
+            cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue) && cryptoValue > 0;
+        
+        if (bothHaveData) {
+            bitcoinYearIndices.push(i);
+        }
+    }
+
+    // Calculate bitcoin as percentage of crypto market
+    const bitcoinValidYears = bitcoinYearIndices.map(index => allYears[index]);
+    const bitcoinPercentages = bitcoinYearIndices.map(i => {
+        const bitcoinValue = bitcoinData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        return (bitcoinValue / cryptoValue) * 100;
+    });
+
+    // Create the bitcoin percentage chart
+    const bitcoinChart = new Chart(bitcoinCtx, {
+        type: 'line',
+        data: {
+            labels: bitcoinValidYears,
+            datasets: [{
+                label: 'Bitcoin % of Crypto Market',
+                data: bitcoinPercentages,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Crypto Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 

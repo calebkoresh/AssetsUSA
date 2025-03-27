@@ -1,0 +1,367 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Ethereum Market Cap - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Ethereum Market Cap</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="ethereumMarketCapChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Ethereum % of GDP</div>
+                <div class="recommended-chart-container">
+                    <canvas id="gdpChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Ethereum % of Total Assets</div>
+                <div class="recommended-chart-container">
+                    <canvas id="assetsChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Ethereum % of Crypto Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="cryptoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const cryptoData = {{ crypto_chart_data|safe }};
+    const goldData = {{ gold_chart_data|safe }};
+    const commercialData = {{ commercial_real_estate_chart_data|safe }};
+    const residentialData = {{ residential_real_estate_chart_data|safe }};
+    const treasuryData = {{ treasury_bonds_chart_data|safe }};
+    const gdpData = {{ gdp_chart_data|safe }};
+    const ethereumData = {{ ethereum_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Find years where ethereum data is available
+    const ethereumYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const ethereumValue = ethereumData.datasets[0].data[i];
+        const hasData = 
+            ethereumValue !== undefined && ethereumValue !== null && !isNaN(ethereumValue);
+        
+        if (hasData) {
+            ethereumYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and ethereum market cap values
+    const validYears = ethereumYearIndices.map(index => allYears[index]);
+    const ethereumValues = ethereumYearIndices.map(i => {
+        return ethereumData.datasets[0].data[i];
+    });
+
+    // Create the ethereum market cap chart
+    const ethereumMarketCapCtx = document.getElementById('ethereumMarketCapChart').getContext('2d');
+    const ethereumMarketCapChart = new Chart(ethereumMarketCapCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Ethereum Market Cap (Trillion USD)',
+                data: ethereumValues,  // Data is already in trillions
+                borderColor: 'rgb(98, 126, 234)', // Ethereum blue
+                backgroundColor: 'rgba(98, 126, 234, 0.1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap (Trillion USD)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Ethereum as Percentage of GDP Chart
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    
+    // Find years where both GDP and ethereum data are available
+    const gdpYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const gdpValue = gdpData.datasets[0].data[i];
+        const ethereumValue = ethereumData.datasets[0].data[i];
+        const allHaveData = 
+            gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+            ethereumValue !== undefined && ethereumValue !== null && !isNaN(ethereumValue);
+        
+        if (allHaveData) {
+            gdpYearIndices.push(i);
+        }
+    }
+
+    // Calculate ethereum as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    const gdpPercentages = gdpYearIndices.map(i => {
+        const ethereumValue = ethereumData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (ethereumValue / gdpValue) * 100;
+    });
+
+    // Create the GDP percentage chart
+    const gdpChart = new Chart(gdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Ethereum % of GDP',
+                data: gdpPercentages,
+                borderColor: 'rgb(98, 126, 234)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Ethereum as Percentage of Total Assets Chart
+    const assetsCtx = document.getElementById('assetsChart').getContext('2d');
+    
+    // Find years where data is available for all assets and ethereum
+    const assetYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const allHaveData = [
+            stockData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i],
+            ethereumData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
+        
+        if (allHaveData) {
+            assetYearIndices.push(i);
+        }
+    }
+
+    // Calculate ethereum as percentage of total assets
+    const assetValidYears = assetYearIndices.map(index => allYears[index]);
+    const assetPercentages = assetYearIndices.map(i => {
+        const total = (
+            stockData.datasets[0].data[i] +
+            cryptoData.datasets[0].data[i] +
+            goldData.datasets[0].data[i] +
+            commercialData.datasets[0].data[i] +
+            residentialData.datasets[0].data[i] +
+            treasuryData.datasets[0].data[i]
+        );
+        return (ethereumData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the asset percentage chart
+    const assetsChart = new Chart(assetsCtx, {
+        type: 'line',
+        data: {
+            labels: assetValidYears,
+            datasets: [{
+                label: 'Ethereum % of Total Assets',
+                data: assetPercentages,
+                borderColor: 'rgb(98, 126, 234)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Ethereum as Percentage of Crypto Market Chart
+    const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
+    
+    // Find years where both ethereum and crypto data are available
+    const cryptoYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const ethereumValue = ethereumData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const bothHaveData = 
+            ethereumValue !== undefined && ethereumValue !== null && !isNaN(ethereumValue) &&
+            cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue) && cryptoValue > 0;
+        
+        if (bothHaveData) {
+            cryptoYearIndices.push(i);
+        }
+    }
+
+    // Calculate ethereum as percentage of crypto market
+    const cryptoValidYears = cryptoYearIndices.map(index => allYears[index]);
+    const cryptoPercentages = cryptoYearIndices.map(i => {
+        const ethereumValue = ethereumData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        return (ethereumValue / cryptoValue) * 100;
+    });
+
+    // Create the crypto percentage chart
+    const cryptoChart = new Chart(cryptoCtx, {
+        type: 'line',
+        data: {
+            labels: cryptoValidYears,
+            datasets: [{
+                label: 'Ethereum % of Crypto Market',
+                data: cryptoPercentages,
+                borderColor: 'rgb(98, 126, 234)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Crypto Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 
