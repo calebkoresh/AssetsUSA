@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}S&P 500 PE Ratio - AssetsUSA{% endblock %}
+{% block title %}Gold Market Cap - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,34 +58,34 @@
 
 {% block content %}
     <div class="container">
-        <h1>S&P 500 PE Ratio</h1>
+        <h1>Gold Market Cap</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
-            <canvas id="sp500PEChart"></canvas>
+            <canvas id="goldMarketCapChart"></canvas>
         </div>
         
         <!-- Recommended Charts Section -->
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Shiller PE Ratio (CAPE)</div>
+                <div class="chart-title">Gold % of GDP</div>
                 <div class="recommended-chart-container">
-                    <canvas id="shillerPEChart"></canvas>
+                    <canvas id="gdpChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">S&P 500 Market Cap</div>
+                <div class="chart-title">Gold % of Total Assets</div>
                 <div class="recommended-chart-container">
-                    <canvas id="sp500MarketCapChart"></canvas>
+                    <canvas id="assetsChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">S&P 500 % of Total Stock Market</div>
+                <div class="chart-title">Gold vs Stocks</div>
                 <div class="recommended-chart-container">
-                    <canvas id="sp500PercentageChart"></canvas>
+                    <canvas id="stocksChart"></canvas>
                 </div>
             </div>
         </div>
@@ -100,39 +100,37 @@
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const gdpData = {{ gdp_chart_data|safe }};
-    const stocksPEData = {{ stocks_pe_chart_data|safe }};
-    const sp500PEData = {{ sp500_pe_chart_data|safe }};
-    const sp500Data = {{ sp500_chart_data|safe }};
-    const shillerRatioData = {{ shiller_ratio_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // S&P 500 P/E Chart (Main Chart)
-    const sp500PECtx = document.getElementById('sp500PEChart').getContext('2d');
-    
-    // Find years where S&P 500 P/E data is available
-    const sp500PEYearIndices = [];
+    // Find years where gold data is available
+    const goldYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const peValue = sp500PEData.datasets[0].data[i];
-        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        const goldValue = goldData.datasets[0].data[i];
+        const hasData = 
+            goldValue !== undefined && goldValue !== null && !isNaN(goldValue);
         
         if (hasData) {
-            sp500PEYearIndices.push(i);
+            goldYearIndices.push(i);
         }
     }
 
-    // Get valid years and P/E values for S&P 500
-    const sp500PEValidYears = sp500PEYearIndices.map(index => allYears[index]);
-    const sp500PEValues = sp500PEYearIndices.map(i => sp500PEData.datasets[0].data[i]);
+    // Get valid years and gold market cap values
+    const validYears = goldYearIndices.map(index => allYears[index]);
+    const goldValues = goldYearIndices.map(i => {
+        return goldData.datasets[0].data[i];
+    });
 
-    // Create the S&P 500 P/E ratio chart
-    const sp500PEChart = new Chart(sp500PECtx, {
+    // Create the gold market cap chart
+    const goldMarketCapCtx = document.getElementById('goldMarketCapChart').getContext('2d');
+    const goldMarketCapChart = new Chart(goldMarketCapCtx, {
         type: 'line',
         data: {
-            labels: sp500PEValidYears,
+            labels: validYears,
             datasets: [{
-                label: 'S&P 500 P/E Ratio',
-                data: sp500PEValues,
-                borderColor: 'rgb(75, 192, 192)',
+                label: 'Gold Market Cap (Trillion USD)',
+                data: goldValues,  // Data is already in trillions
+                borderColor: 'rgb(255, 205, 86)',
+                backgroundColor: 'rgba(255, 205, 86, 0.1)',
                 tension: 0.1
             }]
         },
@@ -144,101 +142,47 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'P/E Ratio'
+                        text: 'Market Cap (Trillion USD)'
                     }
                 }
             }
         }
     });
 
-    // Shiller P/E Chart
-    const shillerPECtx = document.getElementById('shillerPEChart').getContext('2d');
+    // Gold as Percentage of GDP Chart
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
-    // Find years where Shiller P/E data is available
-    const shillerPEYearIndices = [];
+    // Find years where both GDP and gold data are available
+    const gdpYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const peValue = shillerRatioData.datasets[0].data[i];
-        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        const gdpValue = gdpData.datasets[0].data[i];
+        const goldValue = goldData.datasets[0].data[i];
+        const allHaveData = 
+            gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+            goldValue !== undefined && goldValue !== null && !isNaN(goldValue);
         
-        if (hasData) {
-            shillerPEYearIndices.push(i);
+        if (allHaveData) {
+            gdpYearIndices.push(i);
         }
     }
 
-    // Get valid years and P/E values for Shiller ratio
-    const shillerPEValidYears = shillerPEYearIndices.map(index => allYears[index]);
-    const shillerPEValues = shillerPEYearIndices.map(i => shillerRatioData.datasets[0].data[i]);
-
-    // Create the Shiller P/E ratio chart
-    const shillerPEChart = new Chart(shillerPECtx, {
-        type: 'line',
-        data: {
-            labels: shillerPEValidYears,
-            datasets: [{
-                label: 'Shiller P/E Ratio (CAPE)',
-                data: shillerPEValues,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'P/E Ratio'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    enabled: false
-                },
-                legend: {
-                    onClick: null,
-                    onHover: null
-                }
-            },
-            events: [],
-            hover: {
-                mode: null
-            },
-            animation: {
-                duration: 0
-            }
-        }
+    // Calculate gold as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    const gdpPercentages = gdpYearIndices.map(i => {
+        const goldValue = goldData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (goldValue / gdpValue) * 100;
     });
 
-    // S&P 500 Market Cap Chart
-    const sp500MarketCapCtx = document.getElementById('sp500MarketCapChart').getContext('2d');
-    
-    // Find years where S&P 500 data is available
-    const sp500MarketCapYearIndices = [];
-    for (let i = 0; i < allYears.length; i++) {
-        const marketCapValue = sp500Data.datasets[0].data[i];
-        const hasData = marketCapValue !== undefined && marketCapValue !== null && !isNaN(marketCapValue);
-        
-        if (hasData) {
-            sp500MarketCapYearIndices.push(i);
-        }
-    }
-
-    // Get valid years and market cap values for S&P 500
-    const sp500MarketCapValidYears = sp500MarketCapYearIndices.map(index => allYears[index]);
-    const sp500MarketCapValues = sp500MarketCapYearIndices.map(i => sp500Data.datasets[0].data[i]);
-
-    // Create the S&P 500 market cap chart
-    const sp500MarketCapChart = new Chart(sp500MarketCapCtx, {
+    // Create the GDP percentage chart
+    const gdpChart = new Chart(gdpCtx, {
         type: 'line',
         data: {
-            labels: sp500MarketCapValidYears,
+            labels: gdpValidYears,
             datasets: [{
-                label: 'S&P 500 Market Cap (Trillion USD)',
-                data: sp500MarketCapValues,
-                borderColor: 'rgb(75, 192, 192)',
+                label: 'Gold % of GDP',
+                data: gdpPercentages,
+                borderColor: 'rgb(255, 205, 86)',
                 tension: 0.1
             }]
         },
@@ -250,7 +194,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Market Capitalization (Trillion USD)'
+                        text: 'Percentage of GDP (%)'
                     }
                 }
             },
@@ -273,39 +217,117 @@
         }
     });
 
-    // S&P 500 as Percentage of Total Stock Market Chart
-    const sp500PercentageCtx = document.getElementById('sp500PercentageChart').getContext('2d');
+    // Gold as Percentage of Total Assets Chart
+    const assetsCtx = document.getElementById('assetsChart').getContext('2d');
     
-    // Find years where both SP500 and total stock data are available
-    const sp500PercentageYearIndices = [];
+    // Find years where data is available for all assets
+    const assetYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const sp500Value = sp500Data.datasets[0].data[i];
+        const allHaveData = [
+            stockData.datasets[0].data[i],
+            cryptoData.datasets[0].data[i],
+            goldData.datasets[0].data[i],
+            commercialData.datasets[0].data[i],
+            residentialData.datasets[0].data[i],
+            treasuryData.datasets[0].data[i]
+        ].every(value => value !== null && value !== undefined && !isNaN(value));
+        
+        if (allHaveData) {
+            assetYearIndices.push(i);
+        }
+    }
+
+    // Calculate gold as percentage of total assets
+    const assetValidYears = assetYearIndices.map(index => allYears[index]);
+    const assetPercentages = assetYearIndices.map(i => {
+        const total = (
+            stockData.datasets[0].data[i] +
+            cryptoData.datasets[0].data[i] +
+            goldData.datasets[0].data[i] +
+            commercialData.datasets[0].data[i] +
+            residentialData.datasets[0].data[i] +
+            treasuryData.datasets[0].data[i]
+        );
+        return (goldData.datasets[0].data[i] / total) * 100;
+    });
+
+    // Create the asset percentage chart
+    const assetsChart = new Chart(assetsCtx, {
+        type: 'line',
+        data: {
+            labels: assetValidYears,
+            datasets: [{
+                label: 'Gold % of Total Assets',
+                data: assetPercentages,
+                borderColor: 'rgb(255, 205, 86)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Assets (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Gold vs Stocks Chart
+    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    
+    // Find years where both gold and stock data are available
+    const stocksYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const goldValue = goldData.datasets[0].data[i];
         const stockValue = stockData.datasets[0].data[i];
-        const bothHaveData = sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value) &&
-                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        const bothHaveData = 
+            goldValue !== undefined && goldValue !== null && !isNaN(goldValue) &&
+            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
         
         if (bothHaveData) {
-            sp500PercentageYearIndices.push(i);
+            stocksYearIndices.push(i);
         }
     }
 
-    // Calculate SP500 as percentage of total stock market
-    const sp500PercentageValidYears = sp500PercentageYearIndices.map(index => allYears[index]);
-    const sp500Percentages = sp500PercentageYearIndices.map(i => {
-        const sp500Value = sp500Data.datasets[0].data[i];
+    // Calculate gold as percentage of stock market
+    const stocksValidYears = stocksYearIndices.map(index => allYears[index]);
+    const stocksPercentages = stocksYearIndices.map(i => {
+        const goldValue = goldData.datasets[0].data[i];
         const stockValue = stockData.datasets[0].data[i];
-        return (sp500Value / stockValue) * 100;
+        return (goldValue / stockValue) * 100;
     });
 
-    // Create the SP500 percentage chart
-    const sp500PercentageChart = new Chart(sp500PercentageCtx, {
+    // Create the stocks comparison chart
+    const stocksChart = new Chart(stocksCtx, {
         type: 'line',
         data: {
-            labels: sp500PercentageValidYears,
+            labels: stocksValidYears,
             datasets: [{
-                label: 'S&P 500 % of Total Stock Market',
-                data: sp500Percentages,
-                borderColor: 'rgb(75, 192, 192)',
+                label: 'Gold % of Stock Market',
+                data: stocksPercentages,
+                borderColor: 'rgb(255, 205, 86)',
                 tension: 0.1
             }]
         },
@@ -317,7 +339,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+                        text: 'Percentage of Stock Market (%)'
                     }
                 }
             },

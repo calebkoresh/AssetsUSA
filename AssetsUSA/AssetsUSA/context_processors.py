@@ -29,7 +29,8 @@ def asset_data(request):
         'bitcoin',
         'ethereum',
         'stocks_pe',
-        'sp500_pe'
+        'sp500_pe',
+        'shiller_ratio'
     ]
     
     # Initialize data structure

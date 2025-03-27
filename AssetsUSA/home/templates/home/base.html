@@ -90,6 +90,8 @@
                 <div class="dropdown">
                     <!-- Links will go here -->
                     <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
+                    <a href="{% url 'home:sp500_market_cap' %}">S&P 500 Market Cap</a>
+                    <a href="{% url 'home:shiller_ratio' %}">Shiller PE Ratio (CAPE)</a>
                     <a href="{% url 'home:stocks_pe_ratio' %}">Total Stock Market PE Ratio</a>
                     <a href="{% url 'home:stocks_percentage' %}">Stocks % of Total Assets</a>
                     <a href="{% url 'home:stocks_gdp' %}">Stocks % of GDP</a>
@@ -113,6 +115,9 @@
                 <a href="{% url 'home:real_estate' %}">Real Estate</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:total_real_estate_market_cap' %}">Total Real Estate Market Cap</a>
+                    <a href="{% url 'home:residential_real_estate_market_cap' %}">Residential Real Estate Market Cap</a>
+                    <a href="{% url 'home:commercial_real_estate_market_cap' %}">Commercial Real Estate Market Cap</a>
                     <a href="{% url 'home:real_estate_percentage' %}">Real Estate % of Total Assets</a>
                     <a href="{% url 'home:real_estate_gdp' %}">Real Estate % of GDP</a>
                     <a href="{% url 'home:residential_real_estate_percentage' %}">Residential Real Estate % of Total Assets</a>
@@ -137,6 +142,7 @@
                 <a href="{% url 'home:gold' %}">Gold</a>
                 <div class="dropdown">
                     <!-- Links will go here -->
+                    <a href="{% url 'home:gold_market_cap' %}">Gold Market Cap</a>
                     <a href="{% url 'home:gold_percentage' %}">Gold % of Total Assets</a>
                 </div>
             </div>

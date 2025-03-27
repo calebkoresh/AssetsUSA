@@ -12,6 +12,8 @@ urlpatterns = [
     path('gold/', views.gold, name='gold'),
     path('treasury-bonds/', views.treasury_bonds, name='treasury_bonds'),
     path('sp500-pe-ratio/', views.sp500_pe_ratio, name='sp500_pe_ratio'),
+    path('sp500-market-cap/', views.sp500_market_cap, name='sp500_market_cap'),
+    path('shiller-ratio/', views.shiller_ratio, name='shiller_ratio'),
     path('stocks-percentage/', views.stocks_percentage, name='stocks_percentage'),
     path('stocks-gdp/', views.stocks_gdp, name='stocks_gdp'),
     path('sp500-percentage/', views.sp500_percentage, name='sp500_percentage'),
@@ -42,4 +44,8 @@ urlpatterns = [
     path('other-crypto-percentage/', views.other_crypto_percentage, name='other_crypto_percentage'),
     path('gold-percentage/', views.gold_percentage, name='gold_percentage'),
     path('treasury-bonds-percentage/', views.treasury_bonds_percentage, name='treasury_bonds_percentage'),
+    path('total-real-estate-market-cap/', views.total_real_estate_market_cap, name='total_real_estate_market_cap'),
+    path('residential-real-estate-market-cap/', views.residential_real_estate_market_cap, name='residential_real_estate_market_cap'),
+    path('commercial-real-estate-market-cap/', views.commercial_real_estate_market_cap, name='commercial_real_estate_market_cap'),
+    path('gold-market-cap/', views.gold_market_cap, name='gold_market_cap'),
 ] 

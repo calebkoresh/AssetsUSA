@@ -69,23 +69,23 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Total Stock Market P/E Ratio</div>
+                <div class="chart-title">GDP by Year</div>
                 <div class="recommended-chart-container">
-                    <canvas id="stocksPEChart"></canvas>
+                    <canvas id="gdpYearChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Stocks % of Total Assets</div>
+                <div class="chart-title">Shiller PE Ratio (CAPE)</div>
                 <div class="recommended-chart-container">
-                    <canvas id="stocksChart"></canvas>
+                    <canvas id="shillerPEChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Stocks % of GDP</div>
+                <div class="chart-title">S&P 500 PE Ratio</div>
                 <div class="recommended-chart-container">
-                    <canvas id="gdpChart"></canvas>
+                    <canvas id="sp500PEChart"></canvas>
                 </div>
             </div>
         </div>
@@ -102,6 +102,7 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const stocksPEData = {{ stocks_pe_chart_data|safe }};
     const sp500PEData = {{ sp500_pe_chart_data|safe }};
+    const shillerRatioData = {{ shiller_ratio_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
     // Find years where data is available for all assets
@@ -166,32 +167,90 @@
         }
     });
 
-    // Total Stock Market P/E Chart
-    const stocksPECtx = document.getElementById('stocksPEChart').getContext('2d');
+    // GDP Chart
+    const gdpYearCtx = document.getElementById('gdpYearChart').getContext('2d');
     
-    // Find years where stocks P/E data is available
-    const stocksPEYearIndices = [];
+    // Filter GDP data to only include years with actual data
+    const gdpYears = [];
+    const gdpValues = [];
     for (let i = 0; i < allYears.length; i++) {
-        const peValue = stocksPEData.datasets[0].data[i];
-        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
-        
-        if (hasData) {
-            stocksPEYearIndices.push(i);
+        if (gdpData.datasets[0].data[i] !== null && 
+            gdpData.datasets[0].data[i] !== undefined && 
+            !isNaN(gdpData.datasets[0].data[i])) {
+            gdpYears.push(allYears[i]);
+            gdpValues.push(gdpData.datasets[0].data[i]);
         }
     }
 
-    // Get valid years and P/E values for stocks
-    const stocksPEValidYears = stocksPEYearIndices.map(index => allYears[index]);
-    const stocksPEValues = stocksPEYearIndices.map(i => stocksPEData.datasets[0].data[i]);
-
-    // Create the stocks P/E ratio chart
-    const stocksPEChart = new Chart(stocksPECtx, {
+    // Create the GDP chart
+    const gdpYearChart = new Chart(gdpYearCtx, {
         type: 'line',
         data: {
-            labels: stocksPEValidYears,
+            labels: gdpYears,
             datasets: [{
-                label: 'Total Stock Market P/E Ratio',
-                data: stocksPEValues,
+                label: 'GDP (Trillion USD)',
+                data: gdpValues,
+                borderColor: 'rgb(153, 102, 255)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Value (Trillion USD)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Shiller P/E Ratio Chart
+    const shillerPECtx = document.getElementById('shillerPEChart').getContext('2d');
+    
+    // Find years where Shiller P/E data is available
+    const shillerPEYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const peValue = shillerRatioData.datasets[0].data[i];
+        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        
+        if (hasData) {
+            shillerPEYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and P/E values for Shiller ratio
+    const shillerPEValidYears = shillerPEYearIndices.map(index => allYears[index]);
+    const shillerPEValues = shillerPEYearIndices.map(i => shillerRatioData.datasets[0].data[i]);
+
+    // Create the Shiller P/E ratio chart
+    const shillerPEChart = new Chart(shillerPECtx, {
+        type: 'line',
+        data: {
+            labels: shillerPEValidYears,
+            datasets: [{
+                label: 'Shiller P/E Ratio (CAPE)',
+                data: shillerPEValues,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
@@ -227,97 +286,32 @@
         }
     });
 
-    // Stocks as Percentage of Total Assets Chart
-    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    // S&P 500 P/E Chart
+    const sp500PECtx = document.getElementById('sp500PEChart').getContext('2d');
     
-    // Calculate stocks as percentage of total assets
-    const percentages = validYearIndices.map(i => {
-        const total = (
-            stockData.datasets[0].data[i] +
-            cryptoData.datasets[0].data[i] +
-            goldData.datasets[0].data[i] +
-            commercialData.datasets[0].data[i] +
-            residentialData.datasets[0].data[i] +
-            treasuryData.datasets[0].data[i]
-        );
-        return (stockData.datasets[0].data[i] / total) * 100;
-    });
-
-    // Create the stocks percentage chart
-    const stocksChart = new Chart(stocksCtx, {
-        type: 'line',
-        data: {
-            labels: validYears,
-            datasets: [{
-                label: 'Stocks % of Total Assets',
-                data: percentages,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Percentage of Total Assets (%)'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    enabled: false
-                },
-                legend: {
-                    onClick: null,
-                    onHover: null
-                }
-            },
-            events: [],
-            hover: {
-                mode: null
-            },
-            animation: {
-                duration: 0
-            }
-        }
-    });
-
-    // Stocks as Percentage of GDP Chart
-    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
-    
-    // Find years where both GDP and stock data are available
-    const gdpYearIndices = [];
+    // Find years where S&P 500 P/E data is available
+    const sp500PEYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const gdpValue = gdpData.datasets[0].data[i];
-        const stockValue = stockData.datasets[0].data[i];
-        const bothHaveData = gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
-                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue);
+        const peValue = sp500PEData.datasets[0].data[i];
+        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
         
-        if (bothHaveData) {
-            gdpYearIndices.push(i);
+        if (hasData) {
+            sp500PEYearIndices.push(i);
         }
     }
 
-    // Calculate stock market cap as percentage of GDP
-    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
-    const gdpPercentages = gdpYearIndices.map(i => {
-        const stockValue = stockData.datasets[0].data[i];
-        const gdpValue = gdpData.datasets[0].data[i];
-        return (stockValue / gdpValue) * 100;
-    });
+    // Get valid years and P/E values for S&P 500
+    const sp500PEValidYears = sp500PEYearIndices.map(index => allYears[index]);
+    const sp500PEValues = sp500PEYearIndices.map(i => sp500PEData.datasets[0].data[i]);
 
-    // Create the GDP percentage chart
-    const gdpChart = new Chart(gdpCtx, {
+    // Create the S&P 500 P/E ratio chart
+    const sp500PEChart = new Chart(sp500PECtx, {
         type: 'line',
         data: {
-            labels: gdpValidYears,
+            labels: sp500PEValidYears,
             datasets: [{
-                label: 'Stocks % of GDP',
-                data: gdpPercentages,
+                label: 'S&P 500 P/E Ratio',
+                data: sp500PEValues,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
@@ -330,7 +324,7 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of GDP (%)'
+                        text: 'P/E Ratio'
                     }
                 }
             },

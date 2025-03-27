@@ -33,6 +33,14 @@ def sp500_pe_ratio(request):
     """View function for the S&P 500 PE Ratio page."""
     return render(request, 'home/sp500_pe_ratio.html')
 
+def sp500_market_cap(request):
+    """View function for the S&P 500 Market Cap page."""
+    return render(request, 'home/sp500_market_cap.html')
+
+def shiller_ratio(request):
+    """View function for the Shiller PE Ratio (CAPE) page."""
+    return render(request, 'home/shiller_ratio.html')
+
 def stocks_percentage(request):
     """View function for the Stocks as Percentage of Total Assets page."""
     return render(request, 'home/stocks_percentage.html')
@@ -152,3 +160,19 @@ def gold_percentage(request):
 def treasury_bonds_percentage(request):
     """View function for the Treasury Bonds as Percentage of Total Assets page."""
     return render(request, 'home/treasury_bonds_percentage.html')
+
+def total_real_estate_market_cap(request):
+    """View function for the Total Real Estate Market Cap page."""
+    return render(request, 'home/total_real_estate_market_cap.html')
+
+def residential_real_estate_market_cap(request):
+    """View function for the Residential Real Estate Market Cap page."""
+    return render(request, 'home/residential_real_estate_market_cap.html')
+
+def commercial_real_estate_market_cap(request):
+    """View function for the Commercial Real Estate Market Cap page."""
+    return render(request, 'home/commercial_real_estate_market_cap.html')
+
+def gold_market_cap(request):
+    """View function for the Gold Market Cap page."""
+    return render(request, 'home/gold_market_cap.html')

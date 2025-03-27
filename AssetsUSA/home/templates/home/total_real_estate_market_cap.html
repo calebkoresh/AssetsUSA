@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}S&P 500 PE Ratio - AssetsUSA{% endblock %}
+{% block title %}Total Real Estate Market Cap - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,34 +58,34 @@
 
 {% block content %}
     <div class="container">
-        <h1>S&P 500 PE Ratio</h1>
+        <h1>Total Real Estate Market Cap</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
-            <canvas id="sp500PEChart"></canvas>
+            <canvas id="realEstateMarketCapChart"></canvas>
         </div>
         
         <!-- Recommended Charts Section -->
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Shiller PE Ratio (CAPE)</div>
+                <div class="chart-title">Real Estate % of GDP</div>
                 <div class="recommended-chart-container">
-                    <canvas id="shillerPEChart"></canvas>
+                    <canvas id="gdpChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">S&P 500 Market Cap</div>
+                <div class="chart-title">Residential % of Real Estate</div>
                 <div class="recommended-chart-container">
-                    <canvas id="sp500MarketCapChart"></canvas>
+                    <canvas id="residentialChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">S&P 500 % of Total Stock Market</div>
+                <div class="chart-title">Commercial % of Real Estate</div>
                 <div class="recommended-chart-container">
-                    <canvas id="sp500PercentageChart"></canvas>
+                    <canvas id="commercialChart"></canvas>
                 </div>
             </div>
         </div>
@@ -100,211 +100,37 @@
     const residentialData = {{ residential_real_estate_chart_data|safe }};
     const treasuryData = {{ treasury_bonds_chart_data|safe }};
     const gdpData = {{ gdp_chart_data|safe }};
-    const stocksPEData = {{ stocks_pe_chart_data|safe }};
-    const sp500PEData = {{ sp500_pe_chart_data|safe }};
-    const sp500Data = {{ sp500_chart_data|safe }};
-    const shillerRatioData = {{ shiller_ratio_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // S&P 500 P/E Chart (Main Chart)
-    const sp500PECtx = document.getElementById('sp500PEChart').getContext('2d');
-    
-    // Find years where S&P 500 P/E data is available
-    const sp500PEYearIndices = [];
+    // Find years where both residential and commercial real estate data are available
+    const realEstateYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
-        const peValue = sp500PEData.datasets[0].data[i];
-        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
-        
-        if (hasData) {
-            sp500PEYearIndices.push(i);
-        }
-    }
-
-    // Get valid years and P/E values for S&P 500
-    const sp500PEValidYears = sp500PEYearIndices.map(index => allYears[index]);
-    const sp500PEValues = sp500PEYearIndices.map(i => sp500PEData.datasets[0].data[i]);
-
-    // Create the S&P 500 P/E ratio chart
-    const sp500PEChart = new Chart(sp500PECtx, {
-        type: 'line',
-        data: {
-            labels: sp500PEValidYears,
-            datasets: [{
-                label: 'S&P 500 P/E Ratio',
-                data: sp500PEValues,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'P/E Ratio'
-                    }
-                }
-            }
-        }
-    });
-
-    // Shiller P/E Chart
-    const shillerPECtx = document.getElementById('shillerPEChart').getContext('2d');
-    
-    // Find years where Shiller P/E data is available
-    const shillerPEYearIndices = [];
-    for (let i = 0; i < allYears.length; i++) {
-        const peValue = shillerRatioData.datasets[0].data[i];
-        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
-        
-        if (hasData) {
-            shillerPEYearIndices.push(i);
-        }
-    }
-
-    // Get valid years and P/E values for Shiller ratio
-    const shillerPEValidYears = shillerPEYearIndices.map(index => allYears[index]);
-    const shillerPEValues = shillerPEYearIndices.map(i => shillerRatioData.datasets[0].data[i]);
-
-    // Create the Shiller P/E ratio chart
-    const shillerPEChart = new Chart(shillerPECtx, {
-        type: 'line',
-        data: {
-            labels: shillerPEValidYears,
-            datasets: [{
-                label: 'Shiller P/E Ratio (CAPE)',
-                data: shillerPEValues,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'P/E Ratio'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    enabled: false
-                },
-                legend: {
-                    onClick: null,
-                    onHover: null
-                }
-            },
-            events: [],
-            hover: {
-                mode: null
-            },
-            animation: {
-                duration: 0
-            }
-        }
-    });
-
-    // S&P 500 Market Cap Chart
-    const sp500MarketCapCtx = document.getElementById('sp500MarketCapChart').getContext('2d');
-    
-    // Find years where S&P 500 data is available
-    const sp500MarketCapYearIndices = [];
-    for (let i = 0; i < allYears.length; i++) {
-        const marketCapValue = sp500Data.datasets[0].data[i];
-        const hasData = marketCapValue !== undefined && marketCapValue !== null && !isNaN(marketCapValue);
-        
-        if (hasData) {
-            sp500MarketCapYearIndices.push(i);
-        }
-    }
-
-    // Get valid years and market cap values for S&P 500
-    const sp500MarketCapValidYears = sp500MarketCapYearIndices.map(index => allYears[index]);
-    const sp500MarketCapValues = sp500MarketCapYearIndices.map(i => sp500Data.datasets[0].data[i]);
-
-    // Create the S&P 500 market cap chart
-    const sp500MarketCapChart = new Chart(sp500MarketCapCtx, {
-        type: 'line',
-        data: {
-            labels: sp500MarketCapValidYears,
-            datasets: [{
-                label: 'S&P 500 Market Cap (Trillion USD)',
-                data: sp500MarketCapValues,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Market Capitalization (Trillion USD)'
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    enabled: false
-                },
-                legend: {
-                    onClick: null,
-                    onHover: null
-                }
-            },
-            events: [],
-            hover: {
-                mode: null
-            },
-            animation: {
-                duration: 0
-            }
-        }
-    });
-
-    // S&P 500 as Percentage of Total Stock Market Chart
-    const sp500PercentageCtx = document.getElementById('sp500PercentageChart').getContext('2d');
-    
-    // Find years where both SP500 and total stock data are available
-    const sp500PercentageYearIndices = [];
-    for (let i = 0; i < allYears.length; i++) {
-        const sp500Value = sp500Data.datasets[0].data[i];
-        const stockValue = stockData.datasets[0].data[i];
-        const bothHaveData = sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value) &&
-                            stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
+        const commercialValue = commercialData.datasets[0].data[i];
+        const residentialValue = residentialData.datasets[0].data[i];
+        const bothHaveData = 
+            commercialValue !== undefined && commercialValue !== null && !isNaN(commercialValue) &&
+            residentialValue !== undefined && residentialValue !== null && !isNaN(residentialValue);
         
         if (bothHaveData) {
-            sp500PercentageYearIndices.push(i);
+            realEstateYearIndices.push(i);
         }
     }
 
-    // Calculate SP500 as percentage of total stock market
-    const sp500PercentageValidYears = sp500PercentageYearIndices.map(index => allYears[index]);
-    const sp500Percentages = sp500PercentageYearIndices.map(i => {
-        const sp500Value = sp500Data.datasets[0].data[i];
-        const stockValue = stockData.datasets[0].data[i];
-        return (sp500Value / stockValue) * 100;
+    // Get valid years and calculate total real estate market cap
+    const validYears = realEstateYearIndices.map(index => allYears[index]);
+    const totalRealEstateValues = realEstateYearIndices.map(i => {
+        return commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
     });
 
-    // Create the SP500 percentage chart
-    const sp500PercentageChart = new Chart(sp500PercentageCtx, {
+    // Create the total real estate market cap chart
+    const realEstateMarketCapCtx = document.getElementById('realEstateMarketCapChart').getContext('2d');
+    const realEstateMarketCapChart = new Chart(realEstateMarketCapCtx, {
         type: 'line',
         data: {
-            labels: sp500PercentageValidYears,
+            labels: validYears,
             datasets: [{
-                label: 'S&P 500 % of Total Stock Market',
-                data: sp500Percentages,
+                label: 'Total Real Estate Market Cap (Trillion USD)',
+                data: totalRealEstateValues,  // Data is already in trillions
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
@@ -317,7 +143,165 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+                        text: 'Market Cap (Trillion USD)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Real Estate as Percentage of GDP Chart
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    
+    // Find years where both GDP and real estate data are available
+    const gdpYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const gdpValue = gdpData.datasets[0].data[i];
+        const commercialValue = commercialData.datasets[0].data[i];
+        const residentialValue = residentialData.datasets[0].data[i];
+        const allHaveData = 
+            gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+            commercialValue !== undefined && commercialValue !== null && !isNaN(commercialValue) &&
+            residentialValue !== undefined && residentialValue !== null && !isNaN(residentialValue);
+        
+        if (allHaveData) {
+            gdpYearIndices.push(i);
+        }
+    }
+
+    // Calculate real estate as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    const gdpPercentages = gdpYearIndices.map(i => {
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (totalRealEstate / gdpValue) * 100;
+    });
+
+    // Create the GDP percentage chart
+    const gdpChart = new Chart(gdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'Real Estate % of GDP',
+                data: gdpPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Residential as Percentage of Total Real Estate Chart
+    const residentialCtx = document.getElementById('residentialChart').getContext('2d');
+    
+    // Calculate residential real estate as percentage of total real estate
+    const residentialPercentages = realEstateYearIndices.map(i => {
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        return (residentialData.datasets[0].data[i] / totalRealEstate) * 100;
+    });
+
+    // Create the residential percentage chart
+    const residentialChart = new Chart(residentialCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Residential % of Real Estate',
+                data: residentialPercentages,
+                borderColor: 'rgb(255, 99, 132)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Real Estate (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Commercial as Percentage of Total Real Estate Chart
+    const commercialCtx = document.getElementById('commercialChart').getContext('2d');
+    
+    // Calculate commercial real estate as percentage of total real estate
+    const commercialPercentages = realEstateYearIndices.map(i => {
+        const totalRealEstate = commercialData.datasets[0].data[i] + residentialData.datasets[0].data[i];
+        return (commercialData.datasets[0].data[i] / totalRealEstate) * 100;
+    });
+
+    // Create the commercial percentage chart
+    const commercialChart = new Chart(commercialCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Commercial % of Real Estate',
+                data: commercialPercentages,
+                borderColor: 'rgb(54, 162, 235)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Total Real Estate (%)'
                     }
                 }
             },
