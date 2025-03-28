@@ -63,6 +63,7 @@ urlpatterns = [
     path('other-crypto-market-cap/', views.other_crypto_market_cap, name='other_crypto_market_cap'),
     path('top20-stocks-market-cap/', views.top20_stocks_market_cap, name='top20_stocks_market_cap'),
     path('basic-materials-market-cap/', views.basic_materials_market_cap, name='basic_materials_market_cap'),
+    path('consumer-cyclical-market-cap/', views.consumer_cyclical_market_cap, name='consumer_cyclical_market_cap'),
     path('communication-services-market-cap/', views.communication_services_market_cap, name='communication_services_market_cap'),
     path('consumer-defensive-market-cap/', views.consumer_defensive_market_cap, name='consumer_defensive_market_cap'),
     path('energy-market-cap/', views.energy_market_cap, name='energy_market_cap'),

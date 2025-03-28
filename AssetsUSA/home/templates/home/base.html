@@ -51,28 +51,52 @@
             padding: 8px 0;
         }
         
-        /* Three-column dropdown for stocks section */
+        /* Styling for stocks dropdown - now single column */
         .stocks-dropdown {
-            width: 600px; /* Increased width to accommodate three columns */
-            display: none; /* Initially hidden like all dropdowns */
-            flex-direction: row;
-            flex-wrap: wrap;
-            justify-content: flex-start;
+            width: 220px;
+            display: none;
         }
         
-        .stocks-dropdown a {
-            width: 33.33%; /* Each link takes one-third of the width */
-            box-sizing: border-box;
+        /* New styling for submenu/nested dropdown */
+        .submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background-color: #444;
+            min-width: 220px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1002;
+            border-radius: 4px;
+            padding: 8px 0;
         }
         
-        /* Show dropdown on hover */
+        /* Show the main dropdown on hover */
         .nav-item:hover .dropdown {
             display: block;
         }
         
-        /* Special handling for stocks dropdown */
-        .nav-item:hover .stocks-dropdown {
+        /* Show submenu on hover */
+        .dropdown-item:hover .submenu {
+            display: block;
+        }
+        
+        /* Remove old special handling for stocks dropdown that used flex */
+        /* .nav-item:hover .stocks-dropdown {
             display: flex;
+        } */
+        
+        /* Styling for dropdown items with submenus */
+        .dropdown-item {
+            position: relative;
+        }
+        
+        /* Add arrow indicator for items with submenus */
+        .dropdown-item > a.has-submenu::after {
+            content: "›";
+            position: absolute;
+            right: 10px;
+            font-size: 20px;
         }
         
         .dropdown a {
@@ -83,7 +107,7 @@
             font-family: Arial, sans-serif;
         }
         
-        .dropdown a:hover {
+        .dropdown a:hover, .submenu a:hover {
             background-color: #555;
         }
         
@@ -111,86 +135,192 @@
             <div class="nav-item">
                 <a href="{% url 'home:stocks' %}">Stocks</a>
                 <div class="dropdown stocks-dropdown">
-                    <!-- Links will go here -->
-                    <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
-                    <a href="{% url 'home:stock_market_cap' %}">Stock Market Cap</a>
-                    <a href="{% url 'home:sp500_market_cap' %}">S&P 500 Market Cap</a>
-                    <a href="{% url 'home:top20_stocks_market_cap' %}">Top 20 Stocks Market Cap</a>
-                    <a href="{% url 'home:basic_materials_market_cap' %}">Basic Materials Market Cap</a>
-                    <a href="{% url 'home:communication_services_market_cap' %}">Communication Services Market Cap</a>
-                    <a href="{% url 'home:consumer_defensive_market_cap' %}">Consumer Defensive Market Cap</a>
-                    <a href="{% url 'home:energy_market_cap' %}">Energy Market Cap</a>
-                    <a href="{% url 'home:financial_services_market_cap' %}">Financial Services Market Cap</a>
-                    <a href="{% url 'home:healthcare_market_cap' %}">Healthcare Market Cap</a>
-                    <a href="{% url 'home:industrials_market_cap' %}">Industrials Market Cap</a>
-                    <a href="{% url 'home:real_estate_sector_market_cap' %}">Real Estate Sector Market Cap</a>
-                    <a href="{% url 'home:technology_market_cap' %}">Technology Market Cap</a>
-                    <a href="{% url 'home:utilities_market_cap' %}">Utilities Market Cap</a>
-                    <a href="{% url 'home:shiller_ratio' %}">Shiller PE Ratio (CAPE)</a>
-                    <a href="{% url 'home:stocks_pe_ratio' %}">Stock Market PE Ratio</a>
-                    <a href="{% url 'home:stocks_percentage' %}">Stocks % of Total Assets</a>
-                    <a href="{% url 'home:stocks_gdp' %}">Stocks % of GDP</a>
-                    <a href="{% url 'home:sp500_gdp' %}">S&P 500 Buffett Indicator</a>
-                    <a href="{% url 'home:sp500_percentage' %}">S&P 500 Market Share</a>
-                    <a href="{% url 'home:top20_percentage' %}">Top 20 Stocks Market Share</a>
-                    <a href="{% url 'home:basic_materials_percentage' %}">Basic Materials Market Share</a>
-                    <a href="{% url 'home:basic_materials_gdp' %}">Basic Materials Buffett Indicator</a>
-                    <a href="{% url 'home:communication_services_percentage' %}">Communication Services Market Share</a>
-                    <a href="{% url 'home:communication_services_gdp' %}">Communication Services Buffett Indicator</a>
-                    <a href="{% url 'home:consumer_cyclical_percentage' %}">Consumer Cyclical Market Share</a>
-                    <a href="{% url 'home:consumer_cyclical_gdp' %}">Consumer Cyclical Buffett Indicator</a>
-                    <a href="{% url 'home:consumer_defensive_percentage' %}">Consumer Defensive Market Share</a>
-                    <a href="{% url 'home:consumer_defensive_gdp' %}">Consumer Defensive Buffett Indicator</a>
-                    <a href="{% url 'home:energy_percentage' %}">Energy Market Share</a>
-                    <a href="{% url 'home:energy_gdp' %}">Energy Sector Buffett Indicator</a>
-                    <a href="{% url 'home:financial_services_percentage' %}">Financial Services Market Share</a>
-                    <a href="{% url 'home:financial_services_gdp' %}">Financial Services Buffett Indicator</a>
-                    <a href="{% url 'home:healthcare_percentage' %}">Healthcare Market Share</a>
-                    <a href="{% url 'home:healthcare_gdp' %}">Healthcare Sector Buffett Indicator</a>
-                    <a href="{% url 'home:industrials_gdp' %}">Industrials Buffett Indicator</a>
-                    <a href="{% url 'home:industrials_percentage' %}">Industrials Market Share</a>
-                    <a href="{% url 'home:real_estate_sector_percentage' %}">Real Estate Market Share</a>
-                    <a href="{% url 'home:real_estate_sector_gdp' %}">Real Estate Sector Buffett Indicator</a>
-                    <a href="{% url 'home:technology_gdp' %}">Technology Sector Buffett Indicator</a>
-                    <a href="{% url 'home:technology_percentage' %}">Technology Market Share</a>
-                    <a href="{% url 'home:utilities_gdp' %}">Utilities Buffett Indicator</a>
-                    <a href="{% url 'home:utilities_percentage' %}">Utilities Market Share</a>
+                    <!-- Group categories -->
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Total Stock Market</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:stock_market_cap' %}">Stock Market Cap</a>
+                            <a href="{% url 'home:stocks_pe_ratio' %}">Stock Market PE Ratio</a>
+                            <a href="{% url 'home:stocks_percentage' %}">Stocks % of Total Assets</a>
+                            <a href="{% url 'home:stocks_gdp' %}">Stocks % of GDP</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Top 20</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:top20_stocks_market_cap' %}">Top 20 Stocks Market Cap</a>
+                            <a href="{% url 'home:top20_percentage' %}">Top 20 Stocks Market Share</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">S&P 500</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:sp500_market_cap' %}">S&P 500 Market Cap</a>
+                            <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
+                            <a href="{% url 'home:shiller_ratio' %}">Shiller PE Ratio (CAPE)</a>
+                            <a href="{% url 'home:sp500_percentage' %}">S&P 500 Market Share</a>
+                            <a href="{% url 'home:sp500_gdp' %}">S&P 500 Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Basic Materials</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:basic_materials_market_cap' %}">Basic Materials Market Cap</a>
+                            <a href="{% url 'home:basic_materials_percentage' %}">Basic Materials Market Share</a>
+                            <a href="{% url 'home:basic_materials_gdp' %}">Basic Materials Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Communication Services</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:communication_services_market_cap' %}">Communication Services Market Cap</a>
+                            <a href="{% url 'home:communication_services_percentage' %}">Communication Services Market Share</a>
+                            <a href="{% url 'home:communication_services_gdp' %}">Communication Services Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Consumer Cyclical</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:consumer_cyclical_market_cap' %}">Consumer Cyclical Market Cap</a>
+                            <a href="{% url 'home:consumer_cyclical_percentage' %}">Consumer Cyclical Market Share</a>
+                            <a href="{% url 'home:consumer_cyclical_gdp' %}">Consumer Cyclical Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Consumer Defensive</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:consumer_defensive_market_cap' %}">Consumer Defensive Market Cap</a>
+                            <a href="{% url 'home:consumer_defensive_percentage' %}">Consumer Defensive Market Share</a>
+                            <a href="{% url 'home:consumer_defensive_gdp' %}">Consumer Defensive Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Energy</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:energy_market_cap' %}">Energy Market Cap</a>
+                            <a href="{% url 'home:energy_percentage' %}">Energy Market Share</a>
+                            <a href="{% url 'home:energy_gdp' %}">Energy Sector Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Financial Services</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:financial_services_market_cap' %}">Financial Services Market Cap</a>
+                            <a href="{% url 'home:financial_services_percentage' %}">Financial Services Market Share</a>
+                            <a href="{% url 'home:financial_services_gdp' %}">Financial Services Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Healthcare</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:healthcare_market_cap' %}">Healthcare Market Cap</a>
+                            <a href="{% url 'home:healthcare_percentage' %}">Healthcare Market Share</a>
+                            <a href="{% url 'home:healthcare_gdp' %}">Healthcare Sector Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Industrials</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:industrials_market_cap' %}">Industrials Market Cap</a>
+                            <a href="{% url 'home:industrials_percentage' %}">Industrials Market Share</a>
+                            <a href="{% url 'home:industrials_gdp' %}">Industrials Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Real Estate Sector</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:real_estate_sector_market_cap' %}">Real Estate Sector Market Cap</a>
+                            <a href="{% url 'home:real_estate_sector_percentage' %}">Real Estate Market Share</a>
+                            <a href="{% url 'home:real_estate_sector_gdp' %}">Real Estate Sector Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Technology</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:technology_market_cap' %}">Technology Market Cap</a>
+                            <a href="{% url 'home:technology_percentage' %}">Technology Market Share</a>
+                            <a href="{% url 'home:technology_gdp' %}">Technology Sector Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Utilities</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:utilities_market_cap' %}">Utilities Market Cap</a>
+                            <a href="{% url 'home:utilities_percentage' %}">Utilities Market Share</a>
+                            <a href="{% url 'home:utilities_gdp' %}">Utilities Buffett Indicator</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="nav-item">
                 <a href="{% url 'home:real_estate' %}">Real Estate</a>
                 <div class="dropdown">
-                    <!-- Links will go here -->
-                    <a href="{% url 'home:total_real_estate_market_cap' %}">Total Real Estate Market Cap</a>
-                    <a href="{% url 'home:residential_real_estate_market_cap' %}">Residential Real Estate Market Cap</a>
-                    <a href="{% url 'home:commercial_real_estate_market_cap' %}">Commercial Real Estate Market Cap</a>
-                    <a href="{% url 'home:real_estate_percentage' %}">Real Estate % of Total Assets</a>
-                    <a href="{% url 'home:real_estate_gdp' %}">Real Estate Buffett Indicator</a>
-                    <a href="{% url 'home:residential_real_estate_percentage' %}">Residential Real Estate Market Share</a>
-                    <a href="{% url 'home:residential_real_estate_gdp' %}">Residential Real Estate Buffett Indicator</a>
-                    <a href="{% url 'home:commercial_real_estate_percentage' %}">Commercial Real Estate Market Share</a>
-                    <a href="{% url 'home:commercial_real_estate_gdp' %}">Commercial Real Estate Buffett Indicator</a>
+                    <!-- Group categories -->
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Total Real Estate</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:total_real_estate_market_cap' %}">Total Real Estate Market Cap</a>
+                            <a href="{% url 'home:real_estate_percentage' %}">Real Estate % of Total Assets</a>
+                            <a href="{% url 'home:real_estate_gdp' %}">Real Estate Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Residential</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:residential_real_estate_market_cap' %}">Residential Real Estate Market Cap</a>
+                            <a href="{% url 'home:residential_real_estate_percentage' %}">Residential Real Estate Market Share</a>
+                            <a href="{% url 'home:residential_real_estate_gdp' %}">Residential Real Estate Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Commercial</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:commercial_real_estate_market_cap' %}">Commercial Real Estate Market Cap</a>
+                            <a href="{% url 'home:commercial_real_estate_percentage' %}">Commercial Real Estate Market Share</a>
+                            <a href="{% url 'home:commercial_real_estate_gdp' %}">Commercial Real Estate Buffett Indicator</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             
             <div class="nav-item">
                 <a href="{% url 'home:crypto' %}">Crypto</a>
                 <div class="dropdown">
-                    <!-- Links will go here -->
-                    <a href="{% url 'home:crypto_market_cap' %}">Cryptocurrency Market Cap</a>
-                    <a href="{% url 'home:bitcoin_market_cap' %}">Bitcoin Market Cap</a>
-                    <a href="{% url 'home:ethereum_market_cap' %}">Ethereum Market Cap</a>
-                    <a href="{% url 'home:other_crypto_market_cap' %}">Other Cryptocurrencies Market Cap</a>
-                    <a href="{% url 'home:crypto_percentage' %}">Cryptocurrency % of Total Assets</a>
-                    <a href="{% url 'home:crypto_gdp' %}">Cryptocurrency Buffett Indicator</a>
-                    <a href="{% url 'home:crypto_gold_percentage' %}">Cryptocurrency % of Gold Market Cap</a>
-                    <a href="{% url 'home:bitcoin_percentage' %}">Bitcoin Market Share</a>
-                    <a href="{% url 'home:bitcoin_gdp' %}">Bitcoin Buffett Indicator</a>
-                    <a href="{% url 'home:ethereum_percentage' %}">Ethereum Market Share</a>
-                    <a href="{% url 'home:ethereum_gdp' %}">Ethereum Buffett Indicator</a>
-                    <a href="{% url 'home:other_crypto_percentage' %}">Other Cryptocurrencies Market Share</a>
-                    <a href="{% url 'home:other_crypto_gdp' %}">Other Cryptocurrencies Buffett Indicator</a>
+                    <!-- Group categories -->
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">All Cryptocurrencies</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:crypto_market_cap' %}">Cryptocurrency Market Cap</a>
+                            <a href="{% url 'home:crypto_percentage' %}">Cryptocurrency % of Total Assets</a>
+                            <a href="{% url 'home:crypto_gdp' %}">Cryptocurrency Buffett Indicator</a>
+                            <a href="{% url 'home:crypto_gold_percentage' %}">Cryptocurrency % of Gold Market Cap</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Bitcoin</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:bitcoin_market_cap' %}">Bitcoin Market Cap</a>
+                            <a href="{% url 'home:bitcoin_percentage' %}">Bitcoin Market Share</a>
+                            <a href="{% url 'home:bitcoin_gdp' %}">Bitcoin Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Ethereum</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:ethereum_market_cap' %}">Ethereum Market Cap</a>
+                            <a href="{% url 'home:ethereum_percentage' %}">Ethereum Market Share</a>
+                            <a href="{% url 'home:ethereum_gdp' %}">Ethereum Buffett Indicator</a>
+                        </div>
+                    </div>
+                    <div class="dropdown-item">
+                        <a href="#" class="has-submenu">Other Cryptocurrencies</a>
+                        <div class="submenu">
+                            <a href="{% url 'home:other_crypto_market_cap' %}">Other Cryptocurrencies Market Cap</a>
+                            <a href="{% url 'home:other_crypto_percentage' %}">Other Cryptocurrencies Market Share</a>
+                            <a href="{% url 'home:other_crypto_gdp' %}">Other Cryptocurrencies Buffett Indicator</a>
+                        </div>
+                    </div>
                 </div>
             </div>
             

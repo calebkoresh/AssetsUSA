@@ -213,6 +213,10 @@ def basic_materials_market_cap(request):
     """View function for the Basic Materials Market Cap page."""
     return render(request, 'home/basic_materials_market_cap.html')
 
+def consumer_cyclical_market_cap(request):
+    """View function for the Consumer Cyclical Market Cap page."""
+    return render(request, 'home/consumer_cyclical_market_cap.html')
+
 def communication_services_market_cap(request):
     """View function for the Communication Services Market Cap page."""
     return render(request, 'home/communication_services_market_cap.html')
