@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Total Stock Market Cap - AssetsUSA{% endblock %}
+{% block title %}Stock Market Cap - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Total Stock Market Cap</h1>
+        <h1>Stock Market Cap</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -83,7 +83,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Total Stock Market PE Ratio</div>
+                <div class="chart-title">Stock Market P/E Ratio</div>
                 <div class="recommended-chart-container">
                     <canvas id="peRatioChart"></canvas>
                 </div>
@@ -127,7 +127,7 @@
         data: {
             labels: stockValidYears,
             datasets: [{
-                label: 'Total Stock Market Cap',
+                label: 'Stock Market Cap',
                 data: stockValues,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -292,7 +292,7 @@
         }
     });
 
-    // Total Stock Market PE Ratio Chart
+    // Stock Market PE Ratio Chart
     const peRatioCtx = document.getElementById('peRatioChart').getContext('2d');
     
     // Find years where PE data is available
@@ -316,7 +316,7 @@
         data: {
             labels: peValidYears,
             datasets: [{
-                label: 'Total Stock Market PE Ratio',
+                label: 'Stock Market P/E Ratio',
                 data: peValues,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

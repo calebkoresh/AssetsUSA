@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Real Estate Stocks Sector as Percentage of GDP - AssetsUSA{% endblock %}
+{% block title %}Real Estate Sector Buffett Indicator - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Real Estate Stocks Sector as Percentage of GDP</h1>
+        <h1>Real Estate Sector Buffett Indicator</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -98,7 +98,7 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Real Estate Sector as Percentage of GDP Chart (Main Chart)
+    // Real Estate Sector Buffett Indicator Chart (Main Chart)
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
     // Find years where both GDP and real estate data are available
@@ -128,7 +128,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Real Estate Stocks % of GDP',
+                label: 'Real Estate Sector Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

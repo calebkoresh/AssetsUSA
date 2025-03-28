@@ -35,14 +35,14 @@
         <p>Your home for asset data.</p>
         
         <div>
-            <div class="chart-title">Total Asset Pool by Year</div>
+            <div class="chart-title">US Market Cap by Year</div>
             <div class="chart-container">
                 <canvas id="totalAssetsChart"></canvas>
             </div>
         </div>
         
         <div>
-            <div class="chart-title">GDP by Year</div>
+            <div class="chart-title">US GDP</div>
             <div class="chart-container">
                 <canvas id="gdpChart"></canvas>
             </div>
@@ -143,7 +143,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Total Assets (Trillion USD)',
+                label: 'US Market Cap (Trillion USD)',
                 data: totalAssetsByYear,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -182,7 +182,7 @@
         data: {
             labels: gdpYears,
             datasets: [{
-                label: 'GDP (Trillion USD)',
+                label: 'US GDP (Trillion USD)',
                 data: gdpValues,
                 borderColor: 'rgb(153, 102, 255)',
                 tension: 0.1

@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Industrials as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Industrials Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Industrials as Percentage of Total Stock Market</h1>
+        <h1>Industrials Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -83,7 +83,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Basic Materials % of Stock Market</div>
+                <div class="chart-title">Basic Materials Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="basicMaterialsChart"></canvas>
                 </div>
@@ -100,7 +100,7 @@
     const basicMaterialsData = {{ stocks_basic_materials_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Industrials as Percentage of Total Stock Market Chart (Main Chart)
+    // Industrials Market Share Chart (Main Chart)
     const industrialsCtx = document.getElementById('industrialsChart').getContext('2d');
     
     // Find years where both Industrials and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: industrialsValidYears,
             datasets: [{
-                label: 'Industrials % of Total Stock Market',
+                label: 'Industrials Market Share',
                 data: industrialsPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

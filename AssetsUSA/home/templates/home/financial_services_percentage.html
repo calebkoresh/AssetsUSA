@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Financial Services as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Financial Services Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Financial Services as Percentage of Total Stock Market</h1>
+        <h1>Financial Services Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -100,7 +100,7 @@
     const healthcareData = {{ stocks_healthcare_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Financial Services as Percentage of Total Stock Market Chart (Main Chart)
+    // Financial Services Market Share Chart (Main Chart)
     const financialServicesCtx = document.getElementById('financialServicesChart').getContext('2d');
     
     // Find years where both Financial Services and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: financialServicesValidYears,
             datasets: [{
-                label: 'Financial Services % of Total Stock Market',
+                label: 'Financial Services Market Share',
                 data: financialServicesPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Top 20 Stocks as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Top 20 Stocks Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Top 20 Stocks as Percentage of Total Stock Market</h1>
+        <h1>Top 20 Stocks Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -106,7 +106,7 @@
     const sp500PEData = {{ sp500_pe_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Top 20 Stocks as Percentage of Total Stock Market Chart (Main Chart)
+    // Top 20 Stocks Market Share Chart (Main Chart)
     const top20Ctx = document.getElementById('top20Chart').getContext('2d');
     
     // Find years where both Top 20 stocks and total stock data are available
@@ -136,7 +136,7 @@
         data: {
             labels: top20ValidYears,
             datasets: [{
-                label: 'Top 20 Stocks % of Total Stock Market',
+                label: 'Top 20 Stocks Market Share',
                 data: top20Percentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

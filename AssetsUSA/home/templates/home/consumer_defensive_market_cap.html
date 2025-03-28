@@ -83,7 +83,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Consumer Defensive % of Stock Market</div>
+                <div class="chart-title">Consumer Defensive Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="stocksChart"></canvas>
                 </div>
@@ -297,7 +297,7 @@
         }
     });
 
-    // Consumer Defensive as Percentage of Stock Market Chart
+    // Consumer Defensive Market Share Chart
     const stocksCtx = document.getElementById('stocksChart').getContext('2d');
     
     // Find years where both stock market and consumer defensive data are available
@@ -328,7 +328,7 @@
         data: {
             labels: stocksValidYears,
             datasets: [{
-                label: 'Consumer Defensive % of Stock Market',
+                label: 'Consumer Defensive Market Share',
                 data: stocksPercentages,
                 borderColor: 'rgb(0, 162, 184)',
                 tension: 0.1

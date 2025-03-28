@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Basic Materials as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Basic Materials Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Basic Materials as Percentage of Total Stock Market</h1>
+        <h1>Basic Materials Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -100,7 +100,7 @@
     const financialServicesData = {{ stocks_financial_services_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Basic Materials as Percentage of Total Stock Market Chart (Main Chart)
+    // Basic Materials Market Share Chart (Main Chart)
     const basicMaterialsCtx = document.getElementById('basicMaterialsChart').getContext('2d');
     
     // Find years where both Basic Materials and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: basicMaterialsValidYears,
             datasets: [{
-                label: 'Basic Materials % of Total Stock Market',
+                label: 'Basic Materials Market Share',
                 data: basicMaterialsPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

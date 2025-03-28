@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Other Cryptocurrencies % of Crypto Market Cap - AssetsUSA{% endblock %}
+{% block title %}Other Cryptocurrencies Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Other Cryptocurrencies % of Crypto Market Cap</h1>
+        <h1>Other Cryptocurrencies Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -76,14 +76,14 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Bitcoin % of Crypto Market Cap</div>
+                <div class="chart-title">Bitcoin Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="bitcoinPercentageChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Ethereum % of Crypto Market Cap</div>
+                <div class="chart-title">Ethereum Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="ethereumPercentageChart"></canvas>
                 </div>
@@ -136,7 +136,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Other Cryptocurrencies % of Crypto Market Cap',
+                label: 'Other Cryptocurrencies Market Share',
                 data: otherCryptoPercentages,
                 borderColor: 'rgb(153, 102, 255)',
                 tension: 0.1
@@ -247,7 +247,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Bitcoin % of Crypto Market Cap',
+                label: 'Bitcoin Market Share',
                 data: bitcoinPercentages,
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1
@@ -298,7 +298,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Ethereum % of Crypto Market Cap',
+                label: 'Ethereum Market Share',
                 data: ethereumPercentages,
                 borderColor: 'rgb(54, 162, 235)',
                 tension: 0.1

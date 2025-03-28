@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Communication Services % of GDP</div>
+                <div class="chart-title">Communication Services Buffett Indicator</div>
                 <div class="recommended-chart-container">
                     <canvas id="gdpChart"></canvas>
                 </div>
@@ -83,9 +83,9 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Communication Services % of Stock Market</div>
+                <div class="chart-title">Communication Services Market Share</div>
                 <div class="recommended-chart-container">
-                    <canvas id="stocksChart"></canvas>
+                    <canvas id="percentageChart"></canvas>
                 </div>
             </div>
         </div>
@@ -181,7 +181,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Communication Services % of GDP',
+                label: 'Communication Services Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(147, 112, 219)',
                 tension: 0.1
@@ -298,7 +298,7 @@
     });
 
     // Communication Services as Percentage of Stock Market Chart
-    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    const stocksCtx = document.getElementById('percentageChart').getContext('2d');
     
     // Find years where both stock market and communication services data are available
     const stocksYearIndices = [];
@@ -323,14 +323,14 @@
     });
 
     // Create the stocks percentage chart
-    const stocksChart = new Chart(stocksCtx, {
+    const percentageChart = new Chart(stocksCtx, {
         type: 'line',
         data: {
             labels: stocksValidYears,
             datasets: [{
-                label: 'Communication Services % of Stock Market',
+                label: 'Communication Services Market Share',
                 data: stocksPercentages,
-                borderColor: 'rgb(147, 112, 219)',
+                borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
         },

@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Technology as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Technology Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Technology as Percentage of Total Stock Market</h1>
+        <h1>Technology Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Communication Services % of Stock Market</div>
+                <div class="chart-title">Communication Services Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="communicationServicesChart"></canvas>
                 </div>
@@ -100,7 +100,7 @@
     const healthcareData = {{ stocks_healthcare_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Technology as Percentage of Total Stock Market Chart (Main Chart)
+    // Technology Market Share Chart (Main Chart)
     const technologyCtx = document.getElementById('technologyChart').getContext('2d');
     
     // Find years where both Technology and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: technologyValidYears,
             datasets: [{
-                label: 'Technology % of Total Stock Market',
+                label: 'Technology Market Share',
                 data: technologyPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -151,7 +151,7 @@
         }
     });
 
-    // Communication Services as Percentage of Total Stock Market Chart
+    // Communication Services Market Share Chart
     const communicationServicesCtx = document.getElementById('communicationServicesChart').getContext('2d');
     
     // Find years where both Communication Services and total stock data are available
@@ -181,7 +181,7 @@
         data: {
             labels: communicationServicesValidYears,
             datasets: [{
-                label: 'Communication Services % of Total Stock Market',
+                label: 'Communication Services Market Share',
                 data: communicationServicesPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

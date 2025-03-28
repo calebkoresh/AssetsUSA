@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Consumer Cyclical Sector as Percentage of GDP - AssetsUSA{% endblock %}
+{% block title %}Consumer Cyclical Buffett Indicator - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Consumer Cyclical Sector as Percentage of GDP</h1>
+        <h1>Consumer Cyclical Buffett Indicator</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -98,7 +98,7 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Consumer Cyclical as Percentage of GDP Chart (Main Chart)
+    // Consumer Cyclical Buffett Indicator Chart (Main Chart)
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
     // Find years where both GDP and consumer cyclical data are available
@@ -128,7 +128,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Consumer Cyclical % of GDP',
+                label: 'Consumer Cyclical Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

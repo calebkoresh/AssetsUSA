@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Basic Materials Sector as Percentage of GDP - AssetsUSA{% endblock %}
+{% block title %}Basic Materials Buffett Indicator - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Basic Materials Sector as Percentage of GDP</h1>
+        <h1>Basic Materials Buffett Indicator</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Basic Materials % of Stock Market</div>
+                <div class="chart-title">Basic Materials Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="marketShareChart"></canvas>
                 </div>
@@ -98,7 +98,7 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Basic Materials as Percentage of GDP Chart (Main Chart)
+    // Basic Materials Buffett Indicator Chart (Main Chart)
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
     // Find years where both GDP and basic materials data are available
@@ -128,7 +128,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Basic Materials % of GDP',
+                label: 'Basic Materials Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -149,7 +149,7 @@
         }
     });
 
-    // Basic Materials % of Stock Market Chart
+    // Basic Materials Market Share Chart
     const marketShareCtx = document.getElementById('marketShareChart').getContext('2d');
     
     // Find years where both stock market and basic materials data are available
@@ -179,7 +179,7 @@
         data: {
             labels: marketShareValidYears,
             datasets: [{
-                label: 'Basic Materials % of Stock Market',
+                label: 'Basic Materials Market Share',
                 data: marketSharePercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -322,6 +322,73 @@
                     title: {
                         display: true,
                         text: 'Percentage of GDP (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Basic Materials Market Share Chart
+    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    
+    // Find years where both stock market and basic materials data are available
+    const stocksYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const stockValue = stockData.datasets[0].data[i];
+        const sectorValue = basicMaterialsData.datasets[0].data[i];
+        const bothHaveData = stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0 &&
+                            sectorValue !== undefined && sectorValue !== null && !isNaN(sectorValue);
+        
+        if (bothHaveData) {
+            stocksYearIndices.push(i);
+        }
+    }
+
+    // Calculate stocks percentage
+    const stocksValidYears = stocksYearIndices.map(index => allYears[index]);
+    const stocksPercentages = stocksYearIndices.map(i => {
+        const sectorValue = basicMaterialsData.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (sectorValue / stockValue) * 100;
+    });
+
+    // Create the stocks percentage chart
+    const stocksChart = new Chart(stocksCtx, {
+        type: 'line',
+        data: {
+            labels: stocksValidYears,
+            datasets: [{
+                label: 'Basic Materials Market Share',
+                data: stocksPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Stock Market (%)'
                     }
                 }
             },

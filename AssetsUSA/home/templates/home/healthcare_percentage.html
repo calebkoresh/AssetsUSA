@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Healthcare as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Healthcare Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Healthcare as Percentage of Total Stock Market</h1>
+        <h1>Healthcare Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -100,7 +100,7 @@
     const consumerCyclicalData = {{ stocks_consumer_cyclical_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Healthcare as Percentage of Total Stock Market Chart (Main Chart)
+    // Healthcare Market Share Chart (Main Chart)
     const healthcareCtx = document.getElementById('healthcareChart').getContext('2d');
     
     // Find years where both Healthcare and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: healthcareValidYears,
             datasets: [{
-                label: 'Healthcare % of Total Stock Market',
+                label: 'Healthcare Market Share',
                 data: healthcarePercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Real Estate as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Real Estate Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Real Estate as Percentage of Total Stock Market</h1>
+        <h1>Real Estate Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -100,7 +100,7 @@
     const consumerDefensiveData = {{ stocks_consumer_defensive_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Real Estate as Percentage of Total Stock Market Chart (Main Chart)
+    // Real Estate Market Share Chart (Main Chart)
     const realEstateCtx = document.getElementById('realEstateChart').getContext('2d');
     
     // Find years where both Real Estate and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: realEstateValidYears,
             datasets: [{
-                label: 'Real Estate % of Total Stock Market',
+                label: 'Real Estate Market Share',
                 data: realEstatePercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -315,7 +315,7 @@
         data: {
             labels: consumerDefensiveValidYears,
             datasets: [{
-                label: 'Consumer Defensive % of Total Stock Market',
+                label: 'Consumer Defensive Market Share',
                 data: consumerDefensivePercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

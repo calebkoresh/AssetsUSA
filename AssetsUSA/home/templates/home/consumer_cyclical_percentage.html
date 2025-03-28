@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Consumer Cyclical as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Consumer Cyclical Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Consumer Cyclical as Percentage of Total Stock Market</h1>
+        <h1>Consumer Cyclical Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -76,7 +76,7 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Communication Services % of Stock Market</div>
+                <div class="chart-title">Communication Services Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="commServicesChart"></canvas>
                 </div>
@@ -100,7 +100,7 @@
     const financialServicesData = {{ stocks_financial_services_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Consumer Cyclical as Percentage of Total Stock Market Chart (Main Chart)
+    // Consumer Cyclical Market Share Chart (Main Chart)
     const consumerCyclicalCtx = document.getElementById('consumerCyclicalChart').getContext('2d');
     
     // Find years where both Consumer Cyclical and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: consumerCyclicalValidYears,
             datasets: [{
-                label: 'Consumer Cyclical % of Total Stock Market',
+                label: 'Consumer Cyclical Market Share',
                 data: consumerCyclicalPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -248,7 +248,7 @@
         data: {
             labels: commServicesValidYears,
             datasets: [{
-                label: 'Communication Services % of Total Stock Market',
+                label: 'Communication Services Market Share',
                 data: commServicesPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

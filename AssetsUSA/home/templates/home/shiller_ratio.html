@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Total Stock Market P/E Ratio</div>
+                <div class="chart-title">Stock Market P/E Chart</div>
                 <div class="recommended-chart-container">
                     <canvas id="stocksPEChart"></canvas>
                 </div>
@@ -149,7 +149,7 @@
         }
     });
 
-    // Total Stock Market P/E Chart
+    // Stock Market P/E Chart
     const stocksPECtx = document.getElementById('stocksPEChart').getContext('2d');
     
     // Find years where stocks P/E data is available
@@ -173,7 +173,7 @@
         data: {
             labels: stocksPEValidYears,
             datasets: [{
-                label: 'Total Stock Market P/E Ratio',
+                label: 'Stock Market P/E Ratio',
                 data: stocksPEValues,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

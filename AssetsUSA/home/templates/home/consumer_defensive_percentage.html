@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Consumer Defensive as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Consumer Defensive Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Consumer Defensive as Percentage of Total Stock Market</h1>
+        <h1>Consumer Defensive Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -100,7 +100,7 @@
     const utilitiesData = {{ stocks_utilities_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Consumer Defensive as Percentage of Total Stock Market Chart (Main Chart)
+    // Consumer Defensive Market Share Chart (Main Chart)
     const consumerDefensiveCtx = document.getElementById('consumerDefensiveChart').getContext('2d');
     
     // Find years where both Consumer Defensive and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: consumerDefensiveValidYears,
             datasets: [{
-                label: 'Consumer Defensive % of Total Stock Market',
+                label: 'Consumer Defensive Market Share',
                 data: consumerDefensivePercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

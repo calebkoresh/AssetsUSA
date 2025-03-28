@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}GDP by Year - AssetsUSA{% endblock %}
+{% block title %}US GDP - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>GDP by Year</h1>
+        <h1>US GDP</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Total Asset Pool</div>
+                <div class="chart-title">US Market Cap</div>
                 <div class="recommended-chart-container">
                     <canvas id="totalAssetsChart"></canvas>
                 </div>
@@ -125,7 +125,7 @@
         data: {
             labels: gdpYears,
             datasets: [{
-                label: 'GDP (Trillion USD)',
+                label: 'US GDP (Trillion USD)',
                 data: gdpValues,
                 borderColor: 'rgb(153, 102, 255)',
                 tension: 0.1
@@ -187,7 +187,7 @@
         data: {
             labels: validYears,
             datasets: [{
-                label: 'Total Assets (Trillion USD)',
+                label: 'US Market Cap (Trillion USD)',
                 data: totalAssetsByYear,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

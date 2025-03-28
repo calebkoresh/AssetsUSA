@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Energy as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}Energy Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Energy as Percentage of Total Stock Market</h1>
+        <h1>Energy Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -69,7 +69,7 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Basic Materials % of Stock Market</div>
+                <div class="chart-title">Basic Materials Market Share</div>
                 <div class="recommended-chart-container">
                     <canvas id="basicMaterialsChart"></canvas>
                 </div>
@@ -100,7 +100,7 @@
     const utilitiesData = {{ stocks_utilities_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Energy as Percentage of Total Stock Market Chart (Main Chart)
+    // Energy Market Share Chart (Main Chart)
     const energyCtx = document.getElementById('energyChart').getContext('2d');
     
     // Find years where both Energy and total stock data are available
@@ -130,7 +130,7 @@
         data: {
             labels: energyValidYears,
             datasets: [{
-                label: 'Energy % of Total Stock Market',
+                label: 'Energy Market Share',
                 data: energyPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

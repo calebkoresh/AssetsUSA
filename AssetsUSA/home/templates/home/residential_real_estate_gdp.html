@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Residential Real Estate % of GDP - AssetsUSA{% endblock %}
+{% block title %}Residential Real Estate Buffett Indicator - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>Residential Real Estate % of GDP</h1>
+        <h1>Residential Real Estate Buffett Indicator</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -69,14 +69,14 @@
         <div class="section-title">Recommended Charts</div>
         <div class="recommended-charts">
             <div class="recommended-chart">
-                <div class="chart-title">Real Estate % of GDP</div>
+                <div class="chart-title">Real Estate Buffett Indicator</div>
                 <div class="recommended-chart-container">
                     <canvas id="realEstateGdpChart"></canvas>
                 </div>
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Commercial Real Estate % of GDP</div>
+                <div class="chart-title">Commercial Real Estate Buffett Indicator</div>
                 <div class="recommended-chart-container">
                     <canvas id="commercialGdpChart"></canvas>
                 </div>
@@ -132,7 +132,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Residential Real Estate % of GDP',
+                label: 'Residential Real Estate Buffett Indicator',
                 data: residentialGdpPercentages,
                 borderColor: 'rgb(255, 99, 132)',
                 tension: 0.1

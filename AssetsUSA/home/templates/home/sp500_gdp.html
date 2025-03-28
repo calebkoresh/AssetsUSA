@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}S&P 500 as Percentage of GDP - AssetsUSA{% endblock %}
+{% block title %}S&P 500 Buffett Indicator - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>S&P 500 as Percentage of GDP</h1>
+        <h1>S&P 500 Buffett Indicator</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -99,7 +99,7 @@
     const sp500PEData = {{ sp500_pe_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // S&P 500 as Percentage of GDP Chart (Main Chart)
+    // S&P 500 Buffett Indicator Chart (Main Chart)
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
     // Find years where both GDP and S&P 500 data are available
@@ -129,7 +129,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'S&P 500 % of GDP',
+                label: 'S&P 500 Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

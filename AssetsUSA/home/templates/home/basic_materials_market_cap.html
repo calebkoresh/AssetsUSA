@@ -83,9 +83,9 @@
             </div>
             
             <div class="recommended-chart">
-                <div class="chart-title">Basic Materials % of Stock Market</div>
+                <div class="chart-title">Basic Materials Market Share</div>
                 <div class="recommended-chart-container">
-                    <canvas id="stocksChart"></canvas>
+                    <canvas id="percentageChart"></canvas>
                 </div>
             </div>
         </div>
@@ -298,7 +298,7 @@
     });
 
     // Basic Materials as Percentage of Stock Market Chart
-    const stocksCtx = document.getElementById('stocksChart').getContext('2d');
+    const stocksCtx = document.getElementById('percentageChart').getContext('2d');
     
     // Find years where both stock market and basic materials data are available
     const stocksYearIndices = [];
@@ -323,14 +323,14 @@
     });
 
     // Create the stocks percentage chart
-    const stocksChart = new Chart(stocksCtx, {
+    const percentageChart = new Chart(stocksCtx, {
         type: 'line',
         data: {
             labels: stocksValidYears,
             datasets: [{
-                label: 'Basic Materials % of Stock Market',
+                label: 'Basic Materials Market Share',
                 data: stocksPercentages,
-                borderColor: 'rgb(81, 145, 65)',
+                borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             }]
         },

@@ -1,6 +1,6 @@
 {% extends 'home/base.html' %}
 
-{% block title %}S&P 500 as Percentage of Total Stock Market - AssetsUSA{% endblock %}
+{% block title %}S&P 500 Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -58,7 +58,7 @@
 
 {% block content %}
     <div class="container">
-        <h1>S&P 500 as Percentage of Total Stock Market</h1>
+        <h1>S&P 500 Market Share</h1>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
@@ -105,7 +105,7 @@
     const sp500PEData = {{ sp500_pe_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // S&P 500 as Percentage of Total Stock Market Chart (Main Chart)
+    // S&P 500 Market Share Chart (Main Chart)
     const sp500Ctx = document.getElementById('sp500Chart').getContext('2d');
     
     // Find years where both SP500 and total stock data are available
@@ -135,7 +135,7 @@
         data: {
             labels: sp500ValidYears,
             datasets: [{
-                label: 'S&P 500 % of Total Stock Market',
+                label: 'S&P 500 Market Share',
                 data: sp500Percentages,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1

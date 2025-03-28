@@ -150,7 +150,7 @@
         }
     });
 
-    // Technology as Percentage of GDP Chart
+    // Technology Sector Buffett Indicator Chart
     const gdpCtx = document.getElementById('gdpChart').getContext('2d');
     
     // Find years where both GDP and technology data are available
@@ -181,7 +181,7 @@
         data: {
             labels: gdpValidYears,
             datasets: [{
-                label: 'Technology % of GDP',
+                label: 'Technology Sector Buffett Indicator',
                 data: gdpPercentages,
                 borderColor: 'rgb(0, 123, 255)',
                 tension: 0.1
