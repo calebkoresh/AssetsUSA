@@ -9,6 +9,10 @@ def stocks(request):
     """View function for the stocks page."""
     return render(request, 'home/stocks.html')
 
+def stock_market_cap(request):
+    """View function for the Total Stock Market Cap page."""
+    return render(request, 'home/stock_market_cap.html')
+
 def real_estate(request):
     """View function for the real estate page."""
     return render(request, 'home/real_estate.html')
@@ -153,6 +157,10 @@ def other_crypto_percentage(request):
     """View function for the Other Cryptocurrencies as Percentage of Crypto Market Cap page."""
     return render(request, 'home/other_crypto_percentage.html')
 
+def crypto_gold_percentage(request):
+    """View function for the Cryptocurrency as Percentage of Gold Market Cap page."""
+    return render(request, 'home/crypto_gold_percentage.html')
+
 def gold_percentage(request):
     """View function for the Gold as Percentage of Total Assets page."""
     return render(request, 'home/gold_percentage.html')
@@ -240,3 +248,51 @@ def technology_market_cap(request):
 def utilities_market_cap(request):
     """View function for the Utilities Market Cap page."""
     return render(request, 'home/utilities_market_cap.html')
+
+def basic_materials_gdp(request):
+    """View function for the Basic Materials Sector as Percentage of GDP page."""
+    return render(request, 'home/basic_materials_gdp.html')
+
+def communication_services_gdp(request):
+    """View function for the Communication Services Sector as Percentage of GDP page."""
+    return render(request, 'home/communication_services_gdp.html')
+
+def consumer_cyclical_gdp(request):
+    """View function for the Consumer Cyclical Sector as Percentage of GDP page."""
+    return render(request, 'home/consumer_cyclical_gdp.html')
+
+def consumer_defensive_gdp(request):
+    """View function for the Consumer Defensive Sector as Percentage of GDP page."""
+    return render(request, 'home/consumer_defensive_gdp.html')
+
+def energy_gdp(request):
+    """View function for the Energy Sector as Percentage of GDP page."""
+    return render(request, 'home/energy_gdp.html')
+
+def financial_services_gdp(request):
+    """View function for the Financial Services Sector as Percentage of GDP page."""
+    return render(request, 'home/financial_services_gdp.html')
+
+def healthcare_gdp(request):
+    """View function for the Healthcare Sector as Percentage of GDP page."""
+    return render(request, 'home/healthcare_gdp.html')
+
+def industrials_gdp(request):
+    """View function for the Industrials Sector as Percentage of GDP page."""
+    return render(request, 'home/industrials_gdp.html')
+
+def real_estate_sector_gdp(request):
+    """View function for the Real Estate Stocks Sector as Percentage of GDP page."""
+    return render(request, 'home/real_estate_sector_gdp.html')
+
+def technology_gdp(request):
+    """View function for the Technology Sector as Percentage of GDP page."""
+    return render(request, 'home/technology_gdp.html')
+
+def utilities_gdp(request):
+    """View function for the Utilities Sector as Percentage of GDP page."""
+    return render(request, 'home/utilities_gdp.html')
+
+def sp500_gdp(request):
+    """View function for the S&P 500 as Percentage of GDP page."""
+    return render(request, 'home/sp500_gdp.html')

@@ -51,9 +51,9 @@
             padding: 8px 0;
         }
         
-        /* Two-column dropdown for stocks section */
+        /* Three-column dropdown for stocks section */
         .stocks-dropdown {
-            width: 400px; /* Fixed width for better control */
+            width: 600px; /* Increased width to accommodate three columns */
             display: none; /* Initially hidden like all dropdowns */
             flex-direction: row;
             flex-wrap: wrap;
@@ -61,7 +61,7 @@
         }
         
         .stocks-dropdown a {
-            width: 50%; /* Each link takes half the width */
+            width: 33.33%; /* Each link takes one-third of the width */
             box-sizing: border-box;
         }
         
@@ -113,6 +113,7 @@
                 <div class="dropdown stocks-dropdown">
                     <!-- Links will go here -->
                     <a href="{% url 'home:sp500_pe_ratio' %}">S&P 500 PE Ratio</a>
+                    <a href="{% url 'home:stock_market_cap' %}">Total Stock Market Cap</a>
                     <a href="{% url 'home:sp500_market_cap' %}">S&P 500 Market Cap</a>
                     <a href="{% url 'home:top20_stocks_market_cap' %}">Top 20 Stocks Market Cap</a>
                     <a href="{% url 'home:basic_materials_market_cap' %}">Basic Materials Market Cap</a>
@@ -129,18 +130,30 @@
                     <a href="{% url 'home:stocks_pe_ratio' %}">Total Stock Market PE Ratio</a>
                     <a href="{% url 'home:stocks_percentage' %}">Stocks % of Total Assets</a>
                     <a href="{% url 'home:stocks_gdp' %}">Stocks % of GDP</a>
+                    <a href="{% url 'home:sp500_gdp' %}">S&P 500 % of GDP</a>
                     <a href="{% url 'home:sp500_percentage' %}">S&P 500 % of Stock Market</a>
                     <a href="{% url 'home:top20_percentage' %}">Top 20 Stocks % of Stock Market</a>
                     <a href="{% url 'home:basic_materials_percentage' %}">Basic Materials % of Stock Market</a>
+                    <a href="{% url 'home:basic_materials_gdp' %}">Basic Materials % of GDP</a>
                     <a href="{% url 'home:communication_services_percentage' %}">Communication Services % of Stock Market</a>
+                    <a href="{% url 'home:communication_services_gdp' %}">Communication Services % of GDP</a>
                     <a href="{% url 'home:consumer_cyclical_percentage' %}">Consumer Cyclical % of Stock Market</a>
+                    <a href="{% url 'home:consumer_cyclical_gdp' %}">Consumer Cyclical % of GDP</a>
                     <a href="{% url 'home:consumer_defensive_percentage' %}">Consumer Defensive % of Stock Market</a>
+                    <a href="{% url 'home:consumer_defensive_gdp' %}">Consumer Defensive % of GDP</a>
                     <a href="{% url 'home:energy_percentage' %}">Energy % of Stock Market</a>
+                    <a href="{% url 'home:energy_gdp' %}">Energy % of GDP</a>
                     <a href="{% url 'home:financial_services_percentage' %}">Financial Services % of Stock Market</a>
+                    <a href="{% url 'home:financial_services_gdp' %}">Financial Services % of GDP</a>
+                    <a href="{% url 'home:healthcare_gdp' %}">Healthcare % of GDP</a>
                     <a href="{% url 'home:healthcare_percentage' %}">Healthcare % of Stock Market</a>
+                    <a href="{% url 'home:industrials_gdp' %}">Industrials % of GDP</a>
                     <a href="{% url 'home:industrials_percentage' %}">Industrials % of Stock Market</a>
+                    <a href="{% url 'home:real_estate_sector_gdp' %}">Real Estate Stocks % of GDP</a>
                     <a href="{% url 'home:real_estate_sector_percentage' %}">Real Estate % of Stock Market</a>
+                    <a href="{% url 'home:technology_gdp' %}">Technology % of GDP</a>
                     <a href="{% url 'home:technology_percentage' %}">Technology % of Stock Market</a>
+                    <a href="{% url 'home:utilities_gdp' %}">Utilities % of GDP</a>
                     <a href="{% url 'home:utilities_percentage' %}">Utilities % of Stock Market</a>
                 </div>
             </div>
@@ -170,6 +183,7 @@
                     <a href="{% url 'home:ethereum_market_cap' %}">Ethereum Market Cap</a>
                     <a href="{% url 'home:other_crypto_market_cap' %}">Other Cryptocurrencies Market Cap</a>
                     <a href="{% url 'home:crypto_percentage' %}">Cryptocurrency % of Total Assets</a>
+                    <a href="{% url 'home:crypto_gold_percentage' %}">Cryptocurrency % of Gold Market Cap</a>
                     <a href="{% url 'home:bitcoin_percentage' %}">Bitcoin % of Crypto Market Cap</a>
                     <a href="{% url 'home:ethereum_percentage' %}">Ethereum % of Crypto Market Cap</a>
                     <a href="{% url 'home:other_crypto_percentage' %}">Other Cryptocurrencies % of Crypto Market Cap</a>

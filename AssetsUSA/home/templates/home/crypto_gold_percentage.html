@@ -1,0 +1,342 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Cryptocurrency as Percentage of Gold Market Cap - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Cryptocurrency as Percentage of Gold Market Cap</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="cryptoGoldChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">Cryptocurrency Market Cap</div>
+                <div class="recommended-chart-container">
+                    <canvas id="cryptoChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Gold Market Cap</div>
+                <div class="recommended-chart-container">
+                    <canvas id="goldChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">Bitcoin % of Crypto Market Cap</div>
+                <div class="recommended-chart-container">
+                    <canvas id="bitcoinPercentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get the asset data
+    const cryptoData = {{ crypto_chart_data|safe }};
+    const goldData = {{ gold_chart_data|safe }};
+    const bitcoinData = {{ bitcoin_chart_data|safe }};
+    const ethereumData = {{ ethereum_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // Crypto as Percentage of Gold Market Cap Chart (Main Chart)
+    const cryptoGoldCtx = document.getElementById('cryptoGoldChart').getContext('2d');
+    
+    // Find years where both crypto and gold data are available
+    const validYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const goldValue = goldData.datasets[0].data[i];
+        const bothHaveData = cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue) &&
+                             goldValue !== undefined && goldValue !== null && !isNaN(goldValue) && goldValue > 0;
+        
+        if (bothHaveData) {
+            validYearIndices.push(i);
+        }
+    }
+
+    // Calculate crypto market cap as percentage of gold market cap
+    const validYears = validYearIndices.map(index => allYears[index]);
+    const percentages = validYearIndices.map(i => {
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const goldValue = goldData.datasets[0].data[i];
+        return (cryptoValue / goldValue) * 100;
+    });
+
+    // Create the percentage chart
+    const cryptoGoldChart = new Chart(cryptoGoldCtx, {
+        type: 'line',
+        data: {
+            labels: validYears,
+            datasets: [{
+                label: 'Crypto % of Gold Market Cap',
+                data: percentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Gold Market Cap (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // Cryptocurrency Market Cap Chart
+    const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
+    
+    // Find years where crypto data is available
+    const cryptoYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const hasData = cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue);
+        
+        if (hasData) {
+            cryptoYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and values for crypto
+    const cryptoValidYears = cryptoYearIndices.map(index => allYears[index]);
+    const cryptoValues = cryptoYearIndices.map(i => cryptoData.datasets[0].data[i]);
+
+    // Create the crypto market cap chart
+    const cryptoChart = new Chart(cryptoCtx, {
+        type: 'line',
+        data: {
+            labels: cryptoValidYears,
+            datasets: [{
+                label: 'Cryptocurrency Market Cap',
+                data: cryptoValues,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap ($ Trillion)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Gold Market Cap Chart
+    const goldCtx = document.getElementById('goldChart').getContext('2d');
+    
+    // Find years where gold data is available
+    const goldYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const goldValue = goldData.datasets[0].data[i];
+        const hasData = goldValue !== undefined && goldValue !== null && !isNaN(goldValue);
+        
+        if (hasData) {
+            goldYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and values for gold
+    const goldValidYears = goldYearIndices.map(index => allYears[index]);
+    const goldValues = goldYearIndices.map(i => goldData.datasets[0].data[i]);
+
+    // Create the gold market cap chart
+    const goldChart = new Chart(goldCtx, {
+        type: 'line',
+        data: {
+            labels: goldValidYears,
+            datasets: [{
+                label: 'Gold Market Cap',
+                data: goldValues,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap ($ Trillion)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // Bitcoin % of Crypto Market Cap Chart
+    const bitcoinPercentCtx = document.getElementById('bitcoinPercentChart').getContext('2d');
+    
+    // Find years where both bitcoin and crypto data are available
+    const bitcoinYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const bitcoinValue = bitcoinData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        const bothHaveData = bitcoinValue !== undefined && bitcoinValue !== null && !isNaN(bitcoinValue) &&
+                            cryptoValue !== undefined && cryptoValue !== null && !isNaN(cryptoValue) && cryptoValue > 0;
+        
+        if (bothHaveData) {
+            bitcoinYearIndices.push(i);
+        }
+    }
+
+    // Calculate bitcoin as percentage of crypto market cap
+    const bitcoinValidYears = bitcoinYearIndices.map(index => allYears[index]);
+    const bitcoinPercentages = bitcoinYearIndices.map(i => {
+        const bitcoinValue = bitcoinData.datasets[0].data[i];
+        const cryptoValue = cryptoData.datasets[0].data[i];
+        return (bitcoinValue / cryptoValue) * 100;
+    });
+
+    // Create the bitcoin percentage chart
+    const bitcoinPercentChart = new Chart(bitcoinPercentCtx, {
+        type: 'line',
+        data: {
+            labels: bitcoinValidYears,
+            datasets: [{
+                label: 'Bitcoin % of Crypto Market Cap',
+                data: bitcoinPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Crypto Market Cap (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 

@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 
 class Command(BaseCommand):
-    help = 'Import data from CSV files into the Aurora database'
+    help = 'Import data from CSV files into the local database'
 
     def add_arguments(self, parser):
         parser.add_argument('csv_file', type=str, help='Path to the CSV file')

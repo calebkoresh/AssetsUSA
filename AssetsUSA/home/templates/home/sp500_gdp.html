@@ -1,0 +1,342 @@
+{% extends 'home/base.html' %}
+
+{% block title %}S&P 500 as Percentage of GDP - AssetsUSA{% endblock %}
+
+{% block extra_head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            text-align: center;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+        .main-chart-container {
+            margin-top: 20px;
+            height: 400px;
+        }
+        .chart-title {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .recommended-charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .recommended-chart {
+            width: 30%;
+            min-width: 250px;
+            margin-bottom: 30px;
+        }
+        .recommended-chart-container {
+            height: 250px;
+        }
+        .section-title {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+        @media (max-width: 900px) {
+            .recommended-chart {
+                width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>S&P 500 as Percentage of GDP</h1>
+        
+        <!-- Main Chart -->
+        <div class="main-chart-container">
+            <canvas id="gdpChart"></canvas>
+        </div>
+        
+        <!-- Recommended Charts Section -->
+        <div class="section-title">Recommended Charts</div>
+        <div class="recommended-charts">
+            <div class="recommended-chart">
+                <div class="chart-title">S&P 500 P/E Ratio</div>
+                <div class="recommended-chart-container">
+                    <canvas id="sp500PEChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">S&P 500 Market Cap</div>
+                <div class="recommended-chart-container">
+                    <canvas id="sp500Chart"></canvas>
+                </div>
+            </div>
+            
+            <div class="recommended-chart">
+                <div class="chart-title">S&P 500 % of Stock Market</div>
+                <div class="recommended-chart-container">
+                    <canvas id="sp500StockChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Get all the asset data
+    const stockData = {{ stock_market_cap_chart_data|safe }};
+    const sp500Data = {{ sp500_chart_data|safe }};
+    const gdpData = {{ gdp_chart_data|safe }};
+    const sp500PEData = {{ sp500_pe_chart_data|safe }};
+    const allYears = {{ all_years_json|safe }};
+
+    // S&P 500 as Percentage of GDP Chart (Main Chart)
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    
+    // Find years where both GDP and S&P 500 data are available
+    const gdpYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const gdpValue = gdpData.datasets[0].data[i];
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const bothHaveData = gdpValue !== undefined && gdpValue !== null && !isNaN(gdpValue) && gdpValue > 0 &&
+                            sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value);
+        
+        if (bothHaveData) {
+            gdpYearIndices.push(i);
+        }
+    }
+
+    // Calculate S&P 500 market cap as percentage of GDP
+    const gdpValidYears = gdpYearIndices.map(index => allYears[index]);
+    const gdpPercentages = gdpYearIndices.map(i => {
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const gdpValue = gdpData.datasets[0].data[i];
+        return (sp500Value / gdpValue) * 100;
+    });
+
+    // Create the GDP percentage chart
+    const gdpChart = new Chart(gdpCtx, {
+        type: 'line',
+        data: {
+            labels: gdpValidYears,
+            datasets: [{
+                label: 'S&P 500 % of GDP',
+                data: gdpPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of GDP (%)'
+                    }
+                }
+            }
+        }
+    });
+
+    // S&P 500 P/E Chart
+    const sp500PECtx = document.getElementById('sp500PEChart').getContext('2d');
+    
+    // Find years where S&P 500 P/E data is available
+    const sp500PEYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const peValue = sp500PEData.datasets[0].data[i];
+        const hasData = peValue !== undefined && peValue !== null && !isNaN(peValue);
+        
+        if (hasData) {
+            sp500PEYearIndices.push(i);
+        }
+    }
+
+    // Get valid years and P/E values for S&P 500
+    const sp500PEValidYears = sp500PEYearIndices.map(index => allYears[index]);
+    const sp500PEValues = sp500PEYearIndices.map(i => sp500PEData.datasets[0].data[i]);
+
+    // Create the S&P 500 P/E ratio chart
+    const sp500PEChart = new Chart(sp500PECtx, {
+        type: 'line',
+        data: {
+            labels: sp500PEValidYears,
+            datasets: [{
+                label: 'S&P 500 P/E Ratio',
+                data: sp500PEValues,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'P/E Ratio'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // S&P 500 Market Cap Chart
+    const sp500Ctx = document.getElementById('sp500Chart').getContext('2d');
+    
+    // Find years where S&P 500 data is available
+    const sp500YearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const hasData = sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value);
+        
+        if (hasData) {
+            sp500YearIndices.push(i);
+        }
+    }
+
+    // Get valid years and values for S&P 500
+    const sp500ValidYears = sp500YearIndices.map(index => allYears[index]);
+    const sp500Values = sp500YearIndices.map(i => sp500Data.datasets[0].data[i]);
+
+    // Create the S&P 500 market cap chart
+    const sp500Chart = new Chart(sp500Ctx, {
+        type: 'line',
+        data: {
+            labels: sp500ValidYears,
+            datasets: [{
+                label: 'S&P 500 Market Cap',
+                data: sp500Values,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Market Cap ($ Trillion)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+
+    // S&P 500 as Percentage of Stock Market Chart
+    const sp500StockCtx = document.getElementById('sp500StockChart').getContext('2d');
+    
+    // Find years where both stock market and S&P 500 data are available
+    const stockYearIndices = [];
+    for (let i = 0; i < allYears.length; i++) {
+        const stockValue = stockData.datasets[0].data[i];
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const bothHaveData = stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0 &&
+                            sp500Value !== undefined && sp500Value !== null && !isNaN(sp500Value);
+        
+        if (bothHaveData) {
+            stockYearIndices.push(i);
+        }
+    }
+
+    // Calculate S&P 500 as percentage of stock market
+    const stockValidYears = stockYearIndices.map(index => allYears[index]);
+    const stockPercentages = stockYearIndices.map(i => {
+        const sp500Value = sp500Data.datasets[0].data[i];
+        const stockValue = stockData.datasets[0].data[i];
+        return (sp500Value / stockValue) * 100;
+    });
+
+    // Create the S&P 500 percentage of stock market chart
+    const sp500StockChart = new Chart(sp500StockCtx, {
+        type: 'line',
+        data: {
+            labels: stockValidYears,
+            datasets: [{
+                label: 'S&P 500 % of Stock Market',
+                data: stockPercentages,
+                borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Percentage of Stock Market (%)'
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: false
+                },
+                legend: {
+                    onClick: null,
+                    onHover: null
+                }
+            },
+            events: [],
+            hover: {
+                mode: null
+            },
+            animation: {
+                duration: 0
+            }
+        }
+    });
+    </script>
+{% endblock %} 

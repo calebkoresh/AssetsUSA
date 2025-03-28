@@ -13,40 +13,12 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
-import boto3
-import json
 
 load_dotenv()
-print(os.environ.get('DB_HOST'))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-def get_secret():
-    secret_name = "rds!cluster-648e97c0-cb80-44e8-be3b-12eb04421088"  # Your secret name/ARN
-    region_name = "us-east-2"
-    
-    # Create a Secrets Manager client
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-    
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-        secret = get_secret_value_response['SecretString']
-        return json.loads(secret)
-    except Exception as e:
-        # Fall back to environment variables if secret retrieval fails
-        print(f"Error retrieving secret: {e}")
-        return None
-
-# Try to get credentials from Secrets Manager, fall back to .env
-db_credentials = get_secret()
-print(db_credentials)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -109,13 +81,9 @@ WSGI_APPLICATION = 'AssetsUSA.wsgi.application'
 
 DATABASES = {
     'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': os.environ.get('DB_NAME', 'assetsusa'),
-           'USER': db_credentials['username'],
-           'PASSWORD': db_credentials['password'],
-           'HOST': os.environ.get('DB_HOST', ''),  # Aurora endpoint 
-           'PORT': os.environ.get('DB_PORT', '5432'),
-       }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 

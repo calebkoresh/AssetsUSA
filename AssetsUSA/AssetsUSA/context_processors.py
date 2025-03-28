@@ -1,5 +1,7 @@
 from django.db import connection
 import json
+import pandas as pd
+import os
 
 def asset_data(request):
     """Context processor that provides asset data for all templates."""
@@ -33,21 +35,33 @@ def asset_data(request):
         'shiller_ratio'
     ]
     
+    # Get the base directory for CSV files
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    csv_dir = os.path.join(base_dir, 'AssetsUSA', 'database')
+    
     # Initialize data structure
     yearly_data = {}
     all_years = set()
     
-    # First pass: collect all years and data
+    # First pass: collect all years and data from CSV files
     for asset_type in asset_types:
-        with connection.cursor() as cursor:
-            cursor.execute(f"SELECT year, market_cap FROM {asset_type} ORDER BY year")
-            rows = cursor.fetchall()
+        csv_path = os.path.join(csv_dir, f"{asset_type}.csv")
+        try:
+            # Read the CSV file using pandas
+            df = pd.read_csv(csv_path)
             
-            for year, value in rows:
+            # Process each row in the dataframe
+            for _, row in df.iterrows():
+                year = int(row['year'])
+                value = float(row['market_cap'])
+                
                 all_years.add(year)
                 if year not in yearly_data:
                     yearly_data[year] = {}
-                yearly_data[year][asset_type] = float(value)
+                yearly_data[year][asset_type] = value
+        except (FileNotFoundError, pd.errors.EmptyDataError):
+            # Skip if the file doesn't exist or is empty
+            continue
     
     # Convert to sorted list of years
     all_years = sorted(list(all_years))
