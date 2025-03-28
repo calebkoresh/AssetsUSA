@@ -296,3 +296,23 @@ def utilities_gdp(request):
 def sp500_gdp(request):
     """View function for the S&P 500 Buffett Indicator page."""
     return render(request, 'home/sp500_gdp.html')
+
+def gold_gdp(request):
+    """View function for the Gold Buffett Indicator page."""
+    return render(request, 'home/gold_gdp.html')
+
+def crypto_gdp(request):
+    """View function for the Cryptocurrency Buffett Indicator page."""
+    return render(request, 'home/crypto_gdp.html')
+
+def bitcoin_gdp(request):
+    """View function for the Bitcoin Buffett Indicator page."""
+    return render(request, 'home/bitcoin_gdp.html')
+
+def ethereum_gdp(request):
+    """View function for the Ethereum Buffett Indicator page."""
+    return render(request, 'home/ethereum_gdp.html')
+
+def other_crypto_gdp(request):
+    """View function for the Other Cryptocurrencies Buffett Indicator page."""
+    return render(request, 'home/other_crypto_gdp.html')
