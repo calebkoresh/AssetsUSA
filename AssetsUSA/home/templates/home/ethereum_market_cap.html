@@ -3,91 +3,98 @@
 {% block title %}Ethereum Market Cap - AssetsUSA{% endblock %}
 
 {% block extra_head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .container {
-            text-align: center;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-        .main-chart-container {
-            margin-top: 20px;
-            height: 400px;
-        }
-        .chart-title {
-            margin-top: 30px;
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        .recommended-charts {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-        .recommended-chart {
-            width: 30%;
-            min-width: 250px;
-            margin-bottom: 30px;
-        }
-        .recommended-chart-container {
-            height: 250px;
-        }
-        .section-title {
-            margin-top: 40px;
-            margin-bottom: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            text-align: left;
-        }
-        @media (max-width: 900px) {
-            .recommended-chart {
-                width: 100%;
-            }
-        }
-    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
+    <!-- Ad placement 1: Below navigation bar - Leaderboard (728x90) -->
+    <div class="ad-container top-ad">
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
     <div class="container">
         <h1>Ethereum Market Cap</h1>
+        <p class="chart-description">
+            This chart shows the total market capitalization of Ethereum over time. As the second-largest cryptocurrency by market value,
+            Ethereum pioneered smart contracts and has become a foundation for decentralized applications and DeFi protocols.
+        </p>
+        
+        <!-- Time Range Selector -->
+        <div class="time-range-selector">
+            <button class="time-range-btn" data-years="5">5Y</button>
+            <button class="time-range-btn" data-years="10">10Y</button>
+            <button class="time-range-btn" data-years="20">20Y</button>
+            <button class="time-range-btn" data-years="50">50Y</button>
+            <button class="time-range-btn active" data-years="all">All</button>
+        </div>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
             <canvas id="ethereumMarketCapChart"></canvas>
         </div>
         
-        <!-- Recommended Charts Section -->
+        <!-- Recommended Charts Section with two-column layout -->
         <div class="section-title">Recommended Charts</div>
-        <div class="recommended-charts">
-            <div class="recommended-chart">
-                <div class="chart-title">Ethereum % of GDP</div>
-                <div class="recommended-chart-container">
-                    <canvas id="gdpChart"></canvas>
+        
+        <div class="two-column-layout">
+            <!-- Left column for charts -->
+            <div class="charts-column">
+                <div class="recommended-charts">
+                    <div class="recommended-chart">
+                        <div class="chart-title">Ethereum % of GDP</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="gdpChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="recommended-chart">
+                        <div class="chart-title">Ethereum % of Total Assets</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="assetsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="recommended-chart">
+                        <div class="chart-title">Ethereum % of Crypto Market</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="cryptoChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="recommended-chart">
-                <div class="chart-title">Ethereum % of Total Assets</div>
-                <div class="recommended-chart-container">
-                    <canvas id="assetsChart"></canvas>
+            <!-- Right column for ad -->
+            <div class="ad-column">
+                <div class="ad-container sidebar-ad">
+                    <ins class="adsbygoogle"
+                         style="display:inline-block;width:336px;height:600px"
+                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
                 </div>
             </div>
-            
-            <div class="recommended-chart">
-                <div class="chart-title">Ethereum % of Crypto Market</div>
-                <div class="recommended-chart-container">
-                    <canvas id="cryptoChart"></canvas>
-                </div>
-            </div>
+        </div>
+        
+        <!-- Ad placement 3: Below recommended charts section - Rectangle (336x280) -->
+        <div class="ad-container bottom-ad">
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:336px;height:280px"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
     </div>
 
@@ -102,6 +109,16 @@
     const gdpData = {{ gdp_chart_data|safe }};
     const ethereumData = {{ ethereum_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
+
+    // Define chart colors for dark mode
+    Chart.defaults.color = '#a0a0a0';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+    
+    // Define our new financial color palette - Using orange for consistency
+    const accentColor = 'rgb(247, 147, 26)'; // Orange
+    const accentColorTransparent = 'rgba(247, 147, 26, 0.3)';
+    const accentColorLessTransparent = 'rgba(247, 147, 26, 0.2)';
+    const accentColorMostTransparent = 'rgba(247, 147, 26, 0.0)';
 
     // Find years where ethereum data is available
     const ethereumYearIndices = [];
@@ -123,36 +140,220 @@
 
     // Create the ethereum market cap chart
     const ethereumMarketCapCtx = document.getElementById('ethereumMarketCapChart').getContext('2d');
-    const ethereumMarketCapChart = new Chart(ethereumMarketCapCtx, {
-        type: 'line',
-        data: {
-            labels: validYears,
-            datasets: [{
-                label: 'Ethereum Market Cap (Trillion USD)',
-                data: ethereumValues,  // Data is already in trillions
-                borderColor: 'rgb(98, 126, 234)', // Ethereum blue
-                backgroundColor: 'rgba(98, 126, 234, 0.1)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Market Cap (Trillion USD)'
+    let ethereumMarketCapChart;
+    
+    function createEthereumMarketCapChart(years = 'all') {
+        // Filter data based on selected time range
+        let filteredYears = [...validYears];
+        let filteredValues = [...ethereumValues];
+        
+        if (years !== 'all') {
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear - parseInt(years);
+            
+            const filteredData = validYears.map((year, index) => ({
+                year: parseInt(year),
+                value: ethereumValues[index]
+            })).filter(item => item.year >= startYear);
+            
+            filteredYears = filteredData.map(item => item.year.toString());
+            filteredValues = filteredData.map(item => item.value);
+        }
+        
+        // Destroy existing chart if it exists
+        if (ethereumMarketCapChart) {
+            ethereumMarketCapChart.destroy();
+        }
+        
+        // Create gradient for fill
+        const gradient = ethereumMarketCapCtx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, accentColorTransparent);
+        gradient.addColorStop(0.8, accentColorMostTransparent);
+        
+        // Create new chart with filtered data
+        ethereumMarketCapChart = new Chart(ethereumMarketCapCtx, {
+            type: 'line',
+            data: {
+                labels: filteredYears,
+                datasets: [{
+                    label: 'Ethereum Market Cap',
+                    data: filteredValues,
+                    borderColor: accentColor,
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0,
+                    pointRadius: filteredYears.length > 30 ? 0 : 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: accentColor,
+                    pointBorderColor: '#252525',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Market Cap (USD)',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            color: '#a0a0a0',
+                            padding: {top: 10, bottom: 10}
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            padding: 10,
+                            font: {
+                                size: 12
+                            },
+                            color: '#a0a0a0',
+                            callback: function(value) {
+                                if (value >= 1e12) {
+                                    return '$' + (value / 1e12).toFixed(1) + 'T';
+                                } else if (value >= 1e9) {
+                                    return '$' + (value / 1e9).toFixed(1) + 'B';
+                                } else if (value >= 1e6) {
+                                    return '$' + (value / 1e6).toFixed(1) + 'M';
+                                }
+                                return '$' + value;
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false,
+                            display: filteredYears.length <= 30
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: true,
+                            maxTicksLimit: 20,
+                            font: {
+                                size: 12
+                            },
+                            color: '#a0a0a0'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            usePointStyle: true,
+                            padding: 20,
+                            color: '#e0e0e0'
+                        }
+                    },
+                    tooltip: {
+                        enabled: false,
+                    },
+                    verticalLineOnHover: {
+                        enable: true,
+                        lineColor: 'rgba(247, 147, 26, 0.5)',
+                        lineWidth: 1
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                },
+                elements: {
+                    line: {
+                        borderJoinStyle: 'round'
                     }
                 }
-            }
-        }
+            },
+            plugins: [{
+                id: 'verticalLineOnHover',
+                beforeDraw: (chart) => {
+                    if (chart.tooltip?._active?.length) {
+                        const ctx = chart.ctx;
+                        const activePoint = chart.tooltip._active[0];
+                        const { x } = activePoint.element;
+                        const topY = chart.scales.y.top;
+                        const bottomY = chart.scales.y.bottom;
+                        
+                        // Draw vertical line
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, topY);
+                        ctx.lineTo(x, bottomY);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(247, 147, 26, 0.5)';
+                        ctx.stroke();
+                        ctx.restore();
+                        
+                        // Draw value at top of line
+                        if (activePoint.datasetIndex === 0) {
+                            const value = filteredValues[activePoint.index];
+                            const year = filteredYears[activePoint.index];
+                            
+                            ctx.save();
+                            ctx.fillStyle = accentColor;
+                            ctx.fillRect(x - 50, topY, 100, 24);
+                            
+                            ctx.font = 'bold 12px Arial';
+                            ctx.fillStyle = '#252525';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            
+                            // Format the value based on its size
+                            let formattedValue;
+                            if (value >= 1e12) {
+                                formattedValue = '$' + (value / 1e12).toFixed(2) + 'T';
+                            } else if (value >= 1e9) {
+                                formattedValue = '$' + (value / 1e9).toFixed(2) + 'B';
+                            } else if (value >= 1e6) {
+                                formattedValue = '$' + (value / 1e6).toFixed(2) + 'M';
+                            } else {
+                                formattedValue = '$' + value.toFixed(2);
+                            }
+                            
+                            ctx.fillText(`${formattedValue} (${year})`, x, topY + 12);
+                            ctx.restore();
+                        }
+                    }
+                }
+            }]
+        });
+    }
+    
+    // Initialize chart with all data
+    createEthereumMarketCapChart();
+    
+    // Add event listeners to time range buttons
+    document.querySelectorAll('.time-range-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            document.querySelectorAll('.time-range-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Update chart with selected time range
+            createEthereumMarketCapChart(this.dataset.years);
+        });
     });
 
     // Ethereum as Percentage of GDP Chart
-    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
-    
     // Find years where both GDP and ethereum data are available
     const gdpYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
@@ -175,6 +376,12 @@
         return (ethereumValue / gdpValue) * 100;
     });
 
+    // Create gradient for GDP chart
+    const gdpCtx = document.getElementById('gdpChart').getContext('2d');
+    const gdpGradient = gdpCtx.createLinearGradient(0, 0, 0, 250);
+    gdpGradient.addColorStop(0, accentColorLessTransparent);
+    gdpGradient.addColorStop(1, accentColorMostTransparent);
+    
     // Create the GDP percentage chart
     const gdpChart = new Chart(gdpCtx, {
         type: 'line',
@@ -183,8 +390,13 @@
             datasets: [{
                 label: 'Ethereum % of GDP',
                 data: gdpPercentages,
-                borderColor: 'rgb(98, 126, 234)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: gdpGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -195,7 +407,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of GDP (%)'
+                        text: 'Percentage of GDP (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -204,23 +440,22 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
         }
     });
 
     // Ethereum as Percentage of Total Assets Chart
-    const assetsCtx = document.getElementById('assetsChart').getContext('2d');
-    
     // Find years where data is available for all assets and ethereum
     const assetYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
@@ -253,6 +488,12 @@
         return (ethereumData.datasets[0].data[i] / total) * 100;
     });
 
+    // Create gradient for Assets chart
+    const assetsCtx = document.getElementById('assetsChart').getContext('2d');
+    const assetsGradient = assetsCtx.createLinearGradient(0, 0, 0, 250);
+    assetsGradient.addColorStop(0, accentColorLessTransparent);
+    assetsGradient.addColorStop(1, accentColorMostTransparent);
+    
     // Create the asset percentage chart
     const assetsChart = new Chart(assetsCtx, {
         type: 'line',
@@ -261,8 +502,13 @@
             datasets: [{
                 label: 'Ethereum % of Total Assets',
                 data: assetPercentages,
-                borderColor: 'rgb(98, 126, 234)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: assetsGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -273,7 +519,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Assets (%)'
+                        text: 'Percentage of Total Assets (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -282,23 +552,22 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
         }
     });
 
     // Ethereum as Percentage of Crypto Market Chart
-    const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
-    
     // Find years where both ethereum and crypto data are available
     const cryptoYearIndices = [];
     for (let i = 0; i < allYears.length; i++) {
@@ -321,6 +590,12 @@
         return (ethereumValue / cryptoValue) * 100;
     });
 
+    // Create gradient for Crypto chart
+    const cryptoCtx = document.getElementById('cryptoChart').getContext('2d');
+    const cryptoGradient = cryptoCtx.createLinearGradient(0, 0, 0, 250);
+    cryptoGradient.addColorStop(0, accentColorLessTransparent);
+    cryptoGradient.addColorStop(1, accentColorMostTransparent);
+    
     // Create the crypto percentage chart
     const cryptoChart = new Chart(cryptoCtx, {
         type: 'line',
@@ -329,8 +604,13 @@
             datasets: [{
                 label: 'Ethereum % of Crypto Market',
                 data: cryptoPercentages,
-                borderColor: 'rgb(98, 126, 234)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: cryptoGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -341,7 +621,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Crypto Market (%)'
+                        text: 'Percentage of Crypto Market (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -350,17 +654,45 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
+        }
+    });
+    
+    // Add click handlers for the recommended charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Ethereum % of GDP chart redirect
+        const gdpChartElement = document.querySelector('.recommended-chart:nth-child(1)');
+        if (gdpChartElement) {
+            gdpChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:ethereum_gdp' %}";
+            });
+        }
+        
+        // Ethereum % of Total Assets chart redirect
+        const assetsChartElement = document.querySelector('.recommended-chart:nth-child(2)');
+        if (assetsChartElement) {
+            assetsChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:ethereum_percentage' %}";
+            });
+        }
+        
+        // Ethereum % of Crypto Market chart redirect
+        const cryptoChartElement = document.querySelector('.recommended-chart:nth-child(3)');
+        if (cryptoChartElement) {
+            cryptoChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:ethereum_percentage' %}";
+            });
         }
     });
     </script>

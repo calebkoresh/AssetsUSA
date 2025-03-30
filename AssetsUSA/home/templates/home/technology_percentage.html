@@ -3,91 +3,99 @@
 {% block title %}Technology Market Share - AssetsUSA{% endblock %}
 
 {% block extra_head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .container {
-            text-align: center;
-            padding: 2rem;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 80%;
-            max-width: 800px;
-            margin: 2rem auto;
-        }
-        .main-chart-container {
-            margin-top: 20px;
-            height: 400px;
-        }
-        .chart-title {
-            margin-top: 30px;
-            margin-bottom: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #333;
-        }
-        .recommended-charts {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-top: 40px;
-        }
-        .recommended-chart {
-            width: 30%;
-            min-width: 250px;
-            margin-bottom: 30px;
-        }
-        .recommended-chart-container {
-            height: 250px;
-        }
-        .section-title {
-            margin-top: 40px;
-            margin-bottom: 20px;
-            font-size: 22px;
-            font-weight: bold;
-            color: #333;
-            text-align: left;
-        }
-        @media (max-width: 900px) {
-            .recommended-chart {
-                width: 100%;
-            }
-        }
-    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 {% endblock %}
 
 {% block content %}
+    <!-- Ad placement 1: Below navigation bar - Leaderboard (728x90) -->
+    <div class="ad-container top-ad">
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+    </div>
+
     <div class="container">
         <h1>Technology Market Share</h1>
+        <p class="chart-description">
+            This chart shows the technology sector's share of the total US stock market capitalization over time.
+            The technology sector has grown to become one of the most dominant sectors in the market, 
+            reflecting the increasing importance of technology in our economy and daily lives.
+        </p>
+        
+        <!-- Time Range Selector -->
+        <div class="time-range-selector">
+            <button class="time-range-btn" data-years="5">5Y</button>
+            <button class="time-range-btn" data-years="10">10Y</button>
+            <button class="time-range-btn" data-years="20">20Y</button>
+            <button class="time-range-btn" data-years="50">50Y</button>
+            <button class="time-range-btn active" data-years="all">All</button>
+        </div>
         
         <!-- Main Chart -->
         <div class="main-chart-container">
-            <canvas id="technologyChart"></canvas>
+            <canvas id="techMainChart"></canvas>
         </div>
         
-        <!-- Recommended Charts Section -->
+        <!-- Recommended Charts Section with two-column layout -->
         <div class="section-title">Recommended Charts</div>
-        <div class="recommended-charts">
-            <div class="recommended-chart">
-                <div class="chart-title">Communication Services Market Share</div>
-                <div class="recommended-chart-container">
-                    <canvas id="communicationServicesChart"></canvas>
+        
+        <div class="two-column-layout">
+            <!-- Left column for charts -->
+            <div class="charts-column">
+                <div class="recommended-charts">
+                    <div class="recommended-chart">
+                        <div class="chart-title">Communication Services Market Share</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="communicationServicesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="recommended-chart">
+                        <div class="chart-title">Financial Services % of Stock Market</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="financialServicesChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="recommended-chart">
+                        <div class="chart-title">Healthcare % of Stock Market</div>
+                        <div class="recommended-chart-container">
+                            <canvas id="healthcareChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <div class="recommended-chart">
-                <div class="chart-title">Financial Services % of Stock Market</div>
-                <div class="recommended-chart-container">
-                    <canvas id="financialServicesChart"></canvas>
+            <!-- Right column for ad -->
+            <div class="ad-column">
+                <div class="ad-container sidebar-ad">
+                    <ins class="adsbygoogle"
+                         style="display:inline-block;width:336px;height:600px"
+                         data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                         data-ad-slot="XXXXXXXXXX"></ins>
+                    <script>
+                         (adsbygoogle = window.adsbygoogle || []).push({});
+                    </script>
                 </div>
             </div>
-            
-            <div class="recommended-chart">
-                <div class="chart-title">Healthcare % of Stock Market</div>
-                <div class="recommended-chart-container">
-                    <canvas id="healthcareChart"></canvas>
-                </div>
-            </div>
+        </div>
+        
+        <!-- Ad placement 3: Below recommended charts section - Rectangle (336x280) -->
+        <div class="ad-container bottom-ad">
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:336px;height:280px"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
         </div>
     </div>
 
@@ -100,11 +108,20 @@
     const healthcareData = {{ stocks_healthcare_chart_data|safe }};
     const allYears = {{ all_years_json|safe }};
 
-    // Technology Market Share Chart (Main Chart)
-    const technologyCtx = document.getElementById('technologyChart').getContext('2d');
+    // Define chart colors for dark mode
+    Chart.defaults.color = '#a0a0a0';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
     
+    // Define our new financial color palette
+    const accentColor = 'rgb(255, 137, 51)'; // Orange
+    const accentColorTransparent = 'rgba(255, 137, 51, 0.3)';
+    const accentColorLessTransparent = 'rgba(255, 137, 51, 0.2)';
+    const accentColorMostTransparent = 'rgba(255, 137, 51, 0.0)';
+    
+    // Technology Market Share Chart (Main Chart)
     // Find years where both Technology and total stock data are available
-    const technologyYearIndices = [];
+    const techYears = [];
+    const techPercentages = [];
     for (let i = 0; i < allYears.length; i++) {
         const technologyValue = techData.datasets[0].data[i];
         const stockValue = stockData.datasets[0].data[i];
@@ -112,43 +129,207 @@
                             stockValue !== undefined && stockValue !== null && !isNaN(stockValue) && stockValue > 0;
         
         if (bothHaveData) {
-            technologyYearIndices.push(i);
+            techYears.push(allYears[i]);
+            techPercentages.push((technologyValue / stockValue) * 100);
         }
     }
 
-    // Calculate Technology as percentage of total stock market
-    const technologyValidYears = technologyYearIndices.map(index => allYears[index]);
-    const technologyPercentages = technologyYearIndices.map(i => {
-        const technologyValue = techData.datasets[0].data[i];
-        const stockValue = stockData.datasets[0].data[i];
-        return (technologyValue / stockValue) * 100;
-    });
-
-    // Create the Technology percentage chart
-    const technologyChart = new Chart(technologyCtx, {
-        type: 'line',
-        data: {
-            labels: technologyValidYears,
-            datasets: [{
-                label: 'Technology Market Share',
-                data: technologyPercentages,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+    // Create the technology percentage chart
+    const techMainCtx = document.getElementById('techMainChart').getContext('2d');
+    let techMainChart;
+    
+    function createTechChart(years = 'all') {
+        // Filter data based on selected time range
+        let filteredYears = [...techYears];
+        let filteredValues = [...techPercentages];
+        
+        if (years !== 'all') {
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear - parseInt(years);
+            
+            const filteredData = techYears.map((year, index) => ({
+                year: parseInt(year),
+                value: techPercentages[index]
+            })).filter(item => item.year >= startYear);
+            
+            filteredYears = filteredData.map(item => item.year.toString());
+            filteredValues = filteredData.map(item => item.value);
+        }
+        
+        // Destroy existing chart if it exists
+        if (techMainChart) {
+            techMainChart.destroy();
+        }
+        
+        // Create gradient for fill
+        const gradient = techMainCtx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, accentColorTransparent);
+        gradient.addColorStop(0.8, accentColorMostTransparent);
+        
+        // Create new chart with filtered data
+        techMainChart = new Chart(techMainCtx, {
+            type: 'line',
+            data: {
+                labels: filteredYears,
+                datasets: [{
+                    label: 'Technology Market Share (%)',
+                    data: filteredValues,
+                    borderColor: accentColor,
+                    backgroundColor: gradient,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0,
+                    pointRadius: filteredYears.length > 30 ? 0 : 3,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: accentColor,
+                    pointBorderColor: '#252525',
+                    pointBorderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Percentage of Total Stock Market (%)',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            color: '#a0a0a0',
+                            padding: {top: 10, bottom: 10}
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            padding: 10,
+                            font: {
+                                size: 12
+                            },
+                            color: '#a0a0a0',
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)',
+                            drawBorder: false,
+                            display: filteredYears.length <= 30
+                        },
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: true,
+                            maxTicksLimit: 20,
+                            font: {
+                                size: 12
+                            },
+                            color: '#a0a0a0'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            usePointStyle: true,
+                            padding: 20,
+                            color: '#e0e0e0'
+                        }
+                    },
+                    tooltip: {
+                        enabled: false,
+                    },
+                    verticalLineOnHover: {
+                        enable: true,
+                        lineColor: 'rgba(255, 137, 51, 0.5)',
+                        lineWidth: 1
+                    }
+                },
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
+                },
+                elements: {
+                    line: {
+                        borderJoinStyle: 'round'
+                    }
+                },
+                onHover: (event, activeElements) => {
+                    // This will be handled by our custom plugin
+                }
+            },
+            plugins: [{
+                id: 'verticalLineOnHover',
+                beforeDraw: (chart) => {
+                    if (chart.tooltip?._active?.length) {
+                        const ctx = chart.ctx;
+                        const activePoint = chart.tooltip._active[0];
+                        const { x } = activePoint.element;
+                        const topY = chart.scales.y.top;
+                        const bottomY = chart.scales.y.bottom;
+                        
+                        // Draw vertical line
+                        ctx.save();
+                        ctx.beginPath();
+                        ctx.moveTo(x, topY);
+                        ctx.lineTo(x, bottomY);
+                        ctx.lineWidth = 1;
+                        ctx.strokeStyle = 'rgba(255, 137, 51, 0.5)';
+                        ctx.stroke();
+                        ctx.restore();
+                        
+                        // Draw value at top of line
+                        if (activePoint.datasetIndex === 0) {
+                            const value = filteredValues[activePoint.index];
+                            const year = filteredYears[activePoint.index];
+                            
+                            ctx.save();
+                            ctx.fillStyle = accentColor;
+                            ctx.fillRect(x - 50, topY, 100, 24);
+                            
+                            ctx.font = 'bold 12px Arial';
+                            ctx.fillStyle = '#252525';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(`${value.toFixed(2)}% (${year})`, x, topY + 12);
+                            ctx.restore();
+                        }
                     }
                 }
-            }
-        }
+            }]
+        });
+    }
+    
+    // Initialize chart with all data
+    createTechChart();
+    
+    // Add event listeners to time range buttons
+    document.querySelectorAll('.time-range-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            // Update active button
+            document.querySelectorAll('.time-range-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            // Update chart with selected time range
+            createTechChart(this.dataset.years);
+        });
     });
 
     // Communication Services Market Share Chart
@@ -174,6 +355,11 @@
         const stockValue = stockData.datasets[0].data[i];
         return (communicationServicesValue / stockValue) * 100;
     });
+    
+    // Create gradient for Communication Services chart
+    const commGradient = communicationServicesCtx.createLinearGradient(0, 0, 0, 250);
+    commGradient.addColorStop(0, accentColorLessTransparent);
+    commGradient.addColorStop(1, accentColorMostTransparent);
 
     // Create the Communication Services percentage chart
     const communicationServicesChart = new Chart(communicationServicesCtx, {
@@ -183,8 +369,13 @@
             datasets: [{
                 label: 'Communication Services Market Share',
                 data: communicationServicesPercentages,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: commGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -195,7 +386,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+                        text: 'Percentage of Total Stock Market (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -204,16 +419,17 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
         }
     });
@@ -241,6 +457,11 @@
         const stockValue = stockData.datasets[0].data[i];
         return (financialServicesValue / stockValue) * 100;
     });
+    
+    // Create gradient for Financial Services chart
+    const finGradient = financialServicesCtx.createLinearGradient(0, 0, 0, 250);
+    finGradient.addColorStop(0, accentColorLessTransparent);
+    finGradient.addColorStop(1, accentColorMostTransparent);
 
     // Create the Financial Services percentage chart
     const financialServicesChart = new Chart(financialServicesCtx, {
@@ -250,8 +471,13 @@
             datasets: [{
                 label: 'Financial Services % of Total Stock Market',
                 data: financialServicesPercentages,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: finGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -262,7 +488,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+                        text: 'Percentage of Total Stock Market (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -271,16 +521,17 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
         }
     });
@@ -308,6 +559,11 @@
         const stockValue = stockData.datasets[0].data[i];
         return (healthcareValue / stockValue) * 100;
     });
+    
+    // Create gradient for Healthcare chart
+    const healthGradient = healthcareCtx.createLinearGradient(0, 0, 0, 250);
+    healthGradient.addColorStop(0, accentColorLessTransparent);
+    healthGradient.addColorStop(1, accentColorMostTransparent);
 
     // Create the Healthcare percentage chart
     const healthcareChart = new Chart(healthcareCtx, {
@@ -317,8 +573,13 @@
             datasets: [{
                 label: 'Healthcare % of Total Stock Market',
                 data: healthcarePercentages,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
+                borderColor: accentColor,
+                backgroundColor: healthGradient,
+                borderWidth: 1.5,
+                fill: true,
+                tension: 0,
+                pointRadius: 0,
+                pointHoverRadius: 4
             }]
         },
         options: {
@@ -329,7 +590,31 @@
                     beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Percentage of Total Stock Market (%)'
+                        text: 'Percentage of Total Stock Market (%)',
+                        font: {
+                            weight: 'bold'
+                        },
+                        color: '#a0a0a0'
+                    },
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    ticks: {
+                        color: '#a0a0a0',
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        maxRotation: 45,
+                        autoSkip: true,
+                        maxTicksLimit: 6,
+                        color: '#a0a0a0'
                     }
                 }
             },
@@ -338,17 +623,45 @@
                     enabled: false
                 },
                 legend: {
-                    onClick: null,
-                    onHover: null
+                    display: false
                 }
             },
-            events: [],
-            hover: {
-                mode: null
+            interaction: {
+                mode: 'nearest',
+                intersect: false
             },
-            animation: {
-                duration: 0
+            elements: {
+                line: {
+                    borderJoinStyle: 'round'
+                }
             }
+        }
+    });
+    
+    // Add click handlers for the recommended charts
+    document.addEventListener('DOMContentLoaded', function() {
+        // Communication Services Market Share chart redirect
+        const commChartElement = document.querySelector('.recommended-chart:nth-child(1)');
+        if (commChartElement) {
+            commChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:communication_services_percentage' %}";
+            });
+        }
+        
+        // Financial Services % of Stock Market chart redirect
+        const finChartElement = document.querySelector('.recommended-chart:nth-child(2)');
+        if (finChartElement) {
+            finChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:financial_services_percentage' %}";
+            });
+        }
+        
+        // Healthcare % of Stock Market chart redirect
+        const healthChartElement = document.querySelector('.recommended-chart:nth-child(3)');
+        if (healthChartElement) {
+            healthChartElement.addEventListener('click', function() {
+                window.location.href = "{% url 'home:healthcare_percentage' %}";
+            });
         }
     });
     </script>
