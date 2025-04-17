@@ -444,7 +444,8 @@
     // Calculate residential real estate as percentage of total real estate
     const residentialPercentages = realEstateYears.map((year, index) => {
         const totalRealEstate = totalRealEstateValues[index];
-        return (residentialData.datasets[0].data[realEstateYears.indexOf(year)] / totalRealEstate) * 100;
+        const originalIndex = allYears.indexOf(year);
+        return (residentialData.datasets[0].data[originalIndex] / totalRealEstate) * 100;
     });
     
     // Create gradient for residential chart
@@ -531,7 +532,8 @@
     // Calculate commercial real estate as percentage of total real estate
     const commercialPercentages = realEstateYears.map((year, index) => {
         const totalRealEstate = totalRealEstateValues[index];
-        return (commercialData.datasets[0].data[realEstateYears.indexOf(year)] / totalRealEstate) * 100;
+        const originalIndex = allYears.indexOf(year);
+        return (commercialData.datasets[0].data[originalIndex] / totalRealEstate) * 100;
     });
     
     // Create gradient for commercial chart

@@ -44,6 +44,7 @@ body {
 
 /* Accent bar at the bottom of the header */
 .header::after {
+    pointer-events: none;
     content: '';
     position: absolute;
     bottom: 0;
@@ -95,7 +96,6 @@ body {
     z-index: 1001;
     border-radius: var(--border-radius);
     padding: 8px 0;
-    margin-top: 8px;
     border: 1px solid var(--border-color);
 }
 

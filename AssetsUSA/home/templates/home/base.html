@@ -234,5 +234,41 @@
     <div class="content">
         {% block content %}{% endblock %}
     </div>
+    <!-- Script to keep dropdowns open while hovering header, nav-items, or dropdown -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const header = document.querySelector('.header');
+        const navItems = document.querySelectorAll('.nav-item');
+        // Hide all dropdowns
+        function hideAllDropdowns() {
+            navItems.forEach(item => {
+                const dd = item.querySelector('.dropdown');
+                if (dd) dd.style.display = 'none';
+            });
+        }
+        // Show dropdown for hovered nav-item
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                hideAllDropdowns();
+                const dd = item.querySelector('.dropdown');
+                if (dd) dd.style.display = 'block';
+            });
+        });
+        // When leaving header entirely, hide all
+        header.addEventListener('mouseleave', hideAllDropdowns);
+        // Prevent re-running fadeIn CSS animation when entering dropdowns
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dd => {
+            dd.addEventListener('mouseenter', () => {
+                // disable inline CSS animation for subsequent entries
+                dd.style.animation = 'none';
+            });
+            dd.addEventListener('mouseleave', () => {
+                // clear inline override so next open animates
+                dd.style.animation = '';
+            });
+        });
+    });
+    </script>
 </body>
 </html> 
