@@ -115,10 +115,10 @@
     Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
     
     // Define our financial color palette
-    const accentColor = 'rgb(247, 147, 26)'; // Orange
-    const accentColorTransparent = 'rgba(247, 147, 26, 0.3)';
-    const accentColorLessTransparent = 'rgba(247, 147, 26, 0.2)';
-    const accentColorMostTransparent = 'rgba(247, 147, 26, 0.0)';
+    const accentColor = 'rgb(255, 137, 51)'; // Orange
+    const accentColorTransparent = 'rgba(255, 137, 51, 0.3)';
+    const accentColorLessTransparent = 'rgba(255, 137, 51, 0.2)';
+    const accentColorMostTransparent = 'rgba(255, 137, 51, 0.0)';
 
     // Find years where gold data is available
     const goldYearIndices = [];
@@ -263,7 +263,7 @@
                     },
                     verticalLineOnHover: {
                         enable: true,
-                        lineColor: 'rgba(247, 147, 26, 0.5)',
+                        lineColor: 'rgba(255, 137, 51, 0.5)',
                         lineWidth: 1
                     }
                 },
@@ -297,7 +297,7 @@
                         ctx.moveTo(x, topY);
                         ctx.lineTo(x, bottomY);
                         ctx.lineWidth = 1;
-                        ctx.strokeStyle = 'rgba(247, 147, 26, 0.5)';
+                        ctx.strokeStyle = 'rgba(255, 137, 51, 0.5)';
                         ctx.stroke();
                         ctx.restore();
                         
