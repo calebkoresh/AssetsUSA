@@ -17,15 +17,17 @@
     <style>
     @keyframes noteFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     .note-item.fade-in { animation: noteFadeIn 0.3s ease forwards; }
+    @keyframes noteFadeOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+    .note-item.fade-out { animation: noteFadeOut 0.3s ease forwards; }
     </style>
     <ul style="list-style: none; padding: 0; margin-top: 1em;">
         {% for note in notes %}
-            <li class="note-item" style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius); position: relative;">
+            <li class="note-item" data-id="{{ note.pk }}" style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius); position: relative;">
                 <div>{{ note.text|linebreaks }}</div>
                 <small style="color: #666;">{{ note.created_at|date:"Y-m-d H:i" }}</small>
                 <div style="position: absolute; top: 8px; right: 8px;">
-                    <a href="{% url 'accounts:note_edit' note.pk %}" style="margin-right: 8px; color: var(--accent-color);">Edit</a>
-                    <a href="{% url 'accounts:note_delete' note.pk %}" style="color: var(--error-color);">Delete</a>
+                    <a href="{% url 'accounts:note_edit' note.pk %}" class="edit-btn" style="margin-right: 8px; color: var(--accent-color);">Edit</a>
+                    <a href="{% url 'accounts:note_delete' note.pk %}" class="delete-btn" style="color: var(--error-color);">Delete</a>
                 </div>
             </li>
         {% empty %}
@@ -35,35 +37,124 @@
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // CSRF helper
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            document.cookie.split(';').forEach(function(c) {
+                c = c.trim();
+                if (c.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                }
+            });
+        }
+        return cookieValue;
+    }
+    const csrftoken = getCookie('csrftoken');
+
     const newBtn = document.getElementById('new-note-btn');
     const formContainer = document.getElementById('note-form-container');
     const cancelBtn = document.getElementById('cancel-note-form');
     const form = document.getElementById('note-form');
+    const ul = document.querySelector('.notes-page ul');
+
     newBtn.addEventListener('click', () => formContainer.style.display = 'block');
     cancelBtn.addEventListener('click', () => formContainer.style.display = 'none');
+
+    // Create new note via AJAX
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         const data = new FormData(form);
-        fetch(form.action, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: data })
-        .then(response => response.json())
+        fetch(form.action, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken },
+            body: data
+        })
+        .then(res => res.json())
         .then(json => {
             if (json.id) {
-                const ul = document.querySelector('.notes-page ul');
                 const li = document.createElement('li');
                 li.classList.add('note-item', 'fade-in');
+                li.setAttribute('data-id', json.id);
                 li.style.cssText = 'margin-bottom:1em; padding:0.5em; background:var(--bg-secondary); border-radius:var(--border-radius); position:relative;';
                 li.innerHTML = `
                     <div>${json.text.replace(/\n/g, '<br>')}</div>
                     <small style="color:#666;">${json.created_at}</small>
                     <div style="position:absolute; top:8px; right:8px;">
-                        <a href="/notes/edit/${json.id}/" style="margin-right:8px; color: var(--accent-color);">Edit</a>
-                        <a href="/notes/delete/${json.id}/" style="color: var(--error-color);">Delete</a>
+                        <a href="/notes/edit/${json.id}/" class="edit-btn" style="margin-right:8px; color: var(--accent-color);">Edit</a>
+                        <a href="/notes/delete/${json.id}/" class="delete-btn" style="color: var(--error-color);">Delete</a>
                     </div>`;
                 ul.prepend(li);
                 form.reset();
                 formContainer.style.display = 'none';
             }
         });
+    });
+
+    // Handle edit and delete via event delegation
+    ul.addEventListener('click', function(e) {
+        // Inline edit
+        if (e.target.matches('.edit-btn')) {
+            e.preventDefault();
+            const li = e.target.closest('li.note-item');
+            const noteId = li.dataset.id;
+            const textDiv = li.querySelector('div');
+            const actionDiv = e.target.parentElement;
+            const originalText = textDiv.innerText;
+            textDiv.style.display = 'none';
+            actionDiv.style.display = 'none';
+
+            // Create textarea and buttons
+            const textarea = document.createElement('textarea');
+            textarea.value = originalText;
+            textarea.style.cssText = 'width:100%; padding:0.75rem; margin-top:0.5rem; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--border-radius); color:var(--text-primary);';
+            li.insertBefore(textarea, li.querySelector('small'));
+            const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save';
+            saveBtn.style.cssText = 'margin-right:8px; background:var(--accent-color); color:var(--bg-primary); padding:4px 8px; border:none; border-radius:var(--border-radius); cursor:pointer;';
+            const cancelEditBtn = document.createElement('button'); cancelEditBtn.textContent = 'Cancel';
+            cancelEditBtn.style.cssText = 'background:none; border:none; color:var(--text-secondary); cursor:pointer;';
+            li.appendChild(saveBtn);
+            li.appendChild(cancelEditBtn);
+
+            cancelEditBtn.addEventListener('click', function() {
+                textarea.remove(); saveBtn.remove(); cancelEditBtn.remove();
+                textDiv.style.display = ''; actionDiv.style.display = '';
+            });
+            saveBtn.addEventListener('click', function() {
+                const data = new FormData(); data.append('text', textarea.value);
+                fetch(`/notes/edit/${noteId}/`, {
+                    method: 'POST',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken },
+                    body: data
+                })
+                .then(res => res.json())
+                .then(json => {
+                    if (json.id) {
+                        textDiv.innerHTML = json.text.replace(/\n/g,'<br>');
+                        li.querySelector('small').textContent = json.created_at;
+                        textarea.remove(); saveBtn.remove(); cancelEditBtn.remove();
+                        textDiv.style.display = ''; actionDiv.style.display = '';
+                        li.classList.add('fade-in'); setTimeout(() => li.classList.remove('fade-in'), 300);
+                    }
+                });
+            });
+        }
+        // Inline delete
+        if (e.target.matches('.delete-btn')) {
+            e.preventDefault();
+            if (!confirm('Delete this note?')) return;
+            const li = e.target.closest('li.note-item');
+            const noteId = li.dataset.id;
+            fetch(`/notes/delete/${noteId}/`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+            }).then(res => {
+                if (res.ok) {
+                    li.classList.add('fade-out');
+                    setTimeout(() => li.remove(), 300);
+                }
+            });
+        }
     });
 });
 </script>
