@@ -26,9 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-q=zvk$q=b+q*!!6h73q*3yw40vy7x+w+!+j*a_2d-sg-fh$67o'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# Read DEBUG from env var and default to False in production
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+# Populate ALLOWED_HOSTS from the ALLOWED_HOSTS env var (comma‑separated)
+ALLOWED_HOSTS = [h for h in os.getenv("ALLOWED_HOSTS", "").split(",") if h]
+# Always include Render's external hostname
+render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
 
 
 # Application definition
