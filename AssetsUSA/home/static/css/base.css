@@ -214,4 +214,22 @@ body {
 .content {
     padding-top: 64px;
     min-height: calc(100vh - 64px);
+}
+
+/* Add styling for the auth-button so it applies across all pages */
+.auth-button {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+    padding: 6px 12px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+.auth-button:hover {
+    opacity: 0.9;
 } 
