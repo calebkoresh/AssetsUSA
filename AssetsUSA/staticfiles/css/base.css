@@ -214,4 +214,50 @@ body {
 .content {
     padding-top: 64px;
     min-height: calc(100vh - 64px);
+}
+
+/* Auth card styling */
+.auth-card {
+    background-color: var(--bg-elevated);
+    margin: 100px auto 0;
+    max-width: 400px;
+    padding: 24px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.auth-card h2 {
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--text-primary);
+}
+
+.auth-card form p {
+    margin-bottom: 12px;
+}
+
+.auth-card input {
+    width: 100%;
+    padding: 8px 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.auth-submit {
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+    border: none;
+    padding: 10px 16px;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    width: 100%;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.auth-submit:hover {
+    opacity: 0.9;
 } 
