@@ -4,13 +4,14 @@ from .models import Note
 from .forms import NoteForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from django.http import JsonResponse
 
 # Create your views here.
 
 @login_required
 def note_list(request):
     notes = Note.objects.filter(user=request.user)
-    return render(request, 'accounts/note_list.html', {'notes': notes})
+    return render(request, 'accounts/note_list.html', {'notes': notes, 'form': NoteForm()})
 
 @login_required
 def note_create(request):
@@ -20,7 +21,15 @@ def note_create(request):
             note = form.save(commit=False)
             note.user = request.user
             note.save()
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'id': note.id,
+                    'text': note.text,
+                    'created_at': note.created_at.strftime('%Y-%m-%d %H:%M')
+                })
             return redirect('accounts:note_list')
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = NoteForm()
     return render(request, 'accounts/note_form.html', {'form': form})

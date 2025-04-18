@@ -5,10 +5,22 @@
 {% block content %}
 <div class="notes-page">
     <h1>My Notes</h1>
-    <a href="{% url 'accounts:note_create' %}" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); text-decoration: none; font-weight: 600;">New Note</a>
+    <button id="new-note-btn" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer;">New Note</button>
+    <div id="note-form-container" style="display:none; margin-top:1em;">
+        <form id="note-form" action="{% url 'accounts:note_create' %}" method="post">
+            {% csrf_token %}
+            {{ form.text }}
+            <button type="submit" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer;">Save</button>
+            <button type="button" id="cancel-note-form" style="margin-left:10px; background:none; border:none; color: var(--text-secondary); cursor: pointer;">Cancel</button>
+        </form>
+    </div>
+    <style>
+    @keyframes noteFadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .note-item.fade-in { animation: noteFadeIn 0.3s ease forwards; }
+    </style>
     <ul style="list-style: none; padding: 0; margin-top: 1em;">
         {% for note in notes %}
-            <li style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius); position: relative;">
+            <li class="note-item" style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius); position: relative;">
                 <div>{{ note.text|linebreaks }}</div>
                 <small style="color: #666;">{{ note.created_at|date:"Y-m-d H:i" }}</small>
                 <div style="position: absolute; top: 8px; right: 8px;">
@@ -21,4 +33,38 @@
         {% endfor %}
     </ul>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const newBtn = document.getElementById('new-note-btn');
+    const formContainer = document.getElementById('note-form-container');
+    const cancelBtn = document.getElementById('cancel-note-form');
+    const form = document.getElementById('note-form');
+    newBtn.addEventListener('click', () => formContainer.style.display = 'block');
+    cancelBtn.addEventListener('click', () => formContainer.style.display = 'none');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const data = new FormData(form);
+        fetch(form.action, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' }, body: data })
+        .then(response => response.json())
+        .then(json => {
+            if (json.id) {
+                const ul = document.querySelector('.notes-page ul');
+                const li = document.createElement('li');
+                li.classList.add('note-item', 'fade-in');
+                li.style.cssText = 'margin-bottom:1em; padding:0.5em; background:var(--bg-secondary); border-radius:var(--border-radius); position:relative;';
+                li.innerHTML = `
+                    <div>${json.text.replace(/\n/g, '<br>')}</div>
+                    <small style="color:#666;">${json.created_at}</small>
+                    <div style="position:absolute; top:8px; right:8px;">
+                        <a href="/notes/edit/${json.id}/" style="margin-right:8px; color: var(--accent-color);">Edit</a>
+                        <a href="/notes/delete/${json.id}/" style="color: var(--error-color);">Delete</a>
+                    </div>`;
+                ul.prepend(li);
+                form.reset();
+                formContainer.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
 {% endblock %} 
