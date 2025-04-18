@@ -232,4 +232,72 @@ body {
 }
 .auth-button:hover {
     opacity: 0.9;
+}
+
+/* Styling for authentication pages */
+.auth-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    margin: 2rem auto;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.auth-card h2 {
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-card form p {
+    margin-bottom: 1rem;
+}
+
+.auth-card input[type="text"],
+.auth-card input[type="email"],
+.auth-card input[type="password"] {
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    font-size: 1rem;
+    width: 100%;
+}
+
+.auth-card .auth-submit {
+    background-color: var(--accent-color);
+    color: var(--bg-primary);
+    padding: 0.75rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.auth-card .auth-submit:hover {
+    opacity: 0.9;
+}
+
+.auth-card p {
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.auth-card a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
 } 
