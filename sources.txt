@@ -1,0 +1,29 @@
+Stocks - https://data.worldbank.org/indicator/CM.MKT.LCAP.CD
+Stocks - https://siblisresearch.com/data/us-stock-market-value/
+Real Estate - https://www.statista.com/outlook/fmo/real-estate/united-states
+Bonds - https://fred.stlouisfed.org/series/MVMTD027MNFRBDAL#
+Crypto - https://www.coingecko.com/en/global-charts
+GDP - https://www.macrotrends.net/global-metrics/countries/usa/united-states/gdp-gross-domestic-product
+Gold - https://ingoldwetrust.report/chart-gold-bitcoin-marketcap/?lang=en
+Stock Sectors - https://finance.yahoo.com/sectors/consumer-cyclical/
+US Stock Market PE - https://worldperatio.com/area/united-states/
+S and P 500 PE - Irrational Exuberance (Book)
+Shiller PE Ratio - https://www.multpl.com/shiller-pe (Irrational Exuberance (Book))
+
+Websites to steal traffic from: 
+https://www.multpl.com
+https://8marketcap.com/metals/
+https://companiesmarketcap.com
+
+Maybe Add to Website:
+Inflation? 
+Shiller PE Ratio?
+401k Assets
+
+Name Ideas:
+Curated Stock Indicators
+
+assetsusa-1.cluster-cre0ug0s4xql.us-east-2.rds.amazonaws.com
+{'username': 'calebkoresh', 'password': '22*.5WQG3CIxjoEr1K8MAzWv##Tl'}
+
+psql -h assetsusa-1.cluster-cre0ug0s4xql.us-east-2.rds.amazonaws.com -U calebkoresh -d assetsusa
