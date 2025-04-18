@@ -1,0 +1,15 @@
+{% extends 'home/base.html' %}
+
+{% block title %}New Note{% endblock %}
+
+{% block content %}
+<div class="notes-page">
+    <h1>New Note</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600;">Save</button>
+        <a href="{% url 'accounts:note_list' %}" style="margin-left: 10px; text-decoration: none;">Cancel</a>
+    </form>
+</div>
+{% endblock %}

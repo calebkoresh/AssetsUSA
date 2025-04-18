@@ -8,9 +8,13 @@
     <a href="{% url 'accounts:note_create' %}" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); text-decoration: none; font-weight: 600;">New Note</a>
     <ul style="list-style: none; padding: 0; margin-top: 1em;">
         {% for note in notes %}
-            <li style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius);">
+            <li style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius); position: relative;">
                 <div>{{ note.text|linebreaks }}</div>
                 <small style="color: #666;">{{ note.created_at|date:"Y-m-d H:i" }}</small>
+                <div style="position: absolute; top: 8px; right: 8px;">
+                    <a href="{% url 'accounts:note_edit' note.pk %}" style="margin-right: 8px; color: var(--accent-color);">Edit</a>
+                    <a href="{% url 'accounts:note_delete' note.pk %}" style="color: var(--error-color);">Delete</a>
+                </div>
             </li>
         {% empty %}
             <li>No notes yet.</li>
