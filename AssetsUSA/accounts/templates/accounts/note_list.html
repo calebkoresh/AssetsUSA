@@ -110,8 +110,10 @@ document.addEventListener('DOMContentLoaded', function() {
             textarea.style.cssText = 'width:100%; padding:0.75rem; margin-top:0.5rem; background:var(--bg-tertiary); border:1px solid var(--border-color); border-radius:var(--border-radius); color:var(--text-primary);';
             li.insertBefore(textarea, li.querySelector('small'));
             const saveBtn = document.createElement('button'); saveBtn.textContent = 'Save';
+            saveBtn.type = 'button';
             saveBtn.style.cssText = 'margin-right:8px; background:var(--accent-color); color:var(--bg-primary); padding:4px 8px; border:none; border-radius:var(--border-radius); cursor:pointer;';
             const cancelEditBtn = document.createElement('button'); cancelEditBtn.textContent = 'Cancel';
+            cancelEditBtn.type = 'button';
             cancelEditBtn.style.cssText = 'background:none; border:none; color:var(--text-secondary); cursor:pointer;';
             li.appendChild(saveBtn);
             li.appendChild(cancelEditBtn);
@@ -120,7 +122,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 textarea.remove(); saveBtn.remove(); cancelEditBtn.remove();
                 textDiv.style.display = ''; actionDiv.style.display = '';
             });
-            saveBtn.addEventListener('click', function() {
+            saveBtn.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation();
                 const data = new FormData(); data.append('text', textarea.value);
                 fetch(`/notes/edit/${noteId}/`, {
                     method: 'POST',
@@ -136,7 +139,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         textDiv.style.display = ''; actionDiv.style.display = '';
                         li.classList.add('fade-in'); setTimeout(() => li.classList.remove('fade-in'), 300);
                     }
-                });
+                })
+                .catch(err => console.error('Error saving note edit:', err));
             });
         }
         // Inline delete

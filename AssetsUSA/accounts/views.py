@@ -40,8 +40,16 @@ def note_edit(request, pk):
     if request.method == 'POST':
         form = NoteForm(request.POST, instance=note)
         if form.is_valid():
-            form.save()
+            note = form.save()
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'id': note.id,
+                    'text': note.text,
+                    'created_at': note.created_at.strftime('%Y-%m-%d %H:%M')
+                })
             return redirect('accounts:note_list')
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = NoteForm(instance=note)
     return render(request, 'accounts/note_form.html', {'form': form})
