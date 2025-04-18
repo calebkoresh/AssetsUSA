@@ -7,7 +7,26 @@
     <title>{% block title %}AssetsUSA{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    {% block extra_head %}{% endblock %}
+    {% block extra_head %}
+    <style>
+        .auth-button {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        .auth-button:hover {
+            opacity: 0.9;
+        }
+    </style>
+    {% endblock %}
 </head>
 <body>
     <header class="header">
@@ -229,14 +248,11 @@
                 </div>
             </div>
         </nav>
-        <div class="auth-links">
-            {% if user.is_authenticated %}
-                <a href="{% url 'accounts:note_list' %}">My Notes</a> |
-                <a href="{% url 'logout' %}">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-            {% endif %}
-        </div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'logout' %}" class="auth-button">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="auth-button">Login</a>
+        {% endif %}
     </header>
 
     <div class="content">
