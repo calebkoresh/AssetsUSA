@@ -1,0 +1,20 @@
+{% extends 'home/base.html' %}
+
+{% block title %}My Notes{% endblock %}
+
+{% block content %}
+<div class="notes-page">
+    <h1>My Notes</h1>
+    <a href="{% url 'accounts:note_create' %}" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); text-decoration: none; font-weight: 600;">New Note</a>
+    <ul style="list-style: none; padding: 0; margin-top: 1em;">
+        {% for note in notes %}
+            <li style="margin-bottom: 1em; padding: 0.5em; background: var(--bg-secondary); border-radius: var(--border-radius);">
+                <div>{{ note.text|linebreaks }}</div>
+                <small style="color: #666;">{{ note.created_at|date:"Y-m-d H:i" }}</small>
+            </li>
+        {% empty %}
+            <li>No notes yet.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %} 
