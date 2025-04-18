@@ -1,12 +1,20 @@
 {% extends 'home/base.html' %}
 
-{% block title %}US Market Cap - AssetsUSA{% endblock %}
+{% block title %}US Market Cap | Total Market Capitalization of US Assets{% endblock %}
 
 {% block extra_head %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="US Market Cap: Explore the total market capitalization of major US assets, including stocks, real estate, cryptocurrencies, gold, and treasury bonds, measured in trillion USD. Gain professional insights and track trends with our interactive charts.">
+    <meta name="keywords" content="US Market Cap, market capitalization, US assets, stocks, real estate, cryptocurrency, gold, treasury bonds, interactive charts">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="US Market Cap | Total Market Capitalization of US Assets">
+    <meta property="og:description" content="Explore the total market capitalization of major US assets—stocks, real estate, cryptocurrencies, gold, and treasury bonds—measured in trillion USD with professional insights and interactive charts.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
 {% endblock %}
 
 {% block content %}
@@ -24,8 +32,7 @@
     <div class="container">
         <h1>US Market Cap</h1>
         <p class="chart-description">
-            This chart shows the total market capitalization of major US assets, including stocks, real estate, crypto, gold, and treasury bonds. 
-            Market capitalization represents the total value of these assets in the US economy measured in trillion USD.
+            Total market capitalization of major US assets—including stocks, real estate, crypto, gold, and treasury bonds—in trillion USD.
         </p>
         
         <!-- Time Range Selector -->

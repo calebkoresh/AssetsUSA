@@ -1,9 +1,11 @@
 {% extends 'home/base.html' %}
 
-{% block title %}US GDP - AssetsUSA{% endblock %}
+{% block title %}US GDP | Gross Domestic Product of the United States{% endblock %}
 
 {% block extra_head %}
     {% load static %}
+    <meta name="description" content="Visualize the US GDP in trillion USD over time, highlighting historical US economic growth trends and insights into the US economy's GDP performance.">
+    <meta name="keywords" content="US GDP, US Economic Growth, US Economy GDP">
     <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
@@ -24,8 +26,7 @@
     <div class="container">
         <h1>US GDP</h1>
         <p class="chart-description">
-            This chart shows the United States Gross Domestic Product (GDP) over time, measured in trillion USD. 
-            GDP is the total monetary value of all finished goods and services produced within a country's borders in a specific time period.
+            Gross Domestic Product (GDP) is the total value of all goods and services produced in the United States over a specific period.
         </p>
         
         <!-- Time Range Selector -->

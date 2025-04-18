@@ -1,12 +1,15 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Stock Market Cap - AssetsUSA{% endblock %}
+{% block title %}Total Stock Market Cap | US Stock Market Cap{% endblock %}
 
 {% block extra_head %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Total stock market cap is the total market value of all US publicly traded companies' outstanding shares.">
+    <meta name="keywords" content="stock market cap, US stock market cap, total stock market cap">
 {% endblock %}
 
 {% block content %}
@@ -24,8 +27,7 @@
     <div class="container">
         <h1>Stock Market Cap</h1>
         <p class="chart-description">
-            This chart shows the total market capitalization of the US stock market over time, measured in trillion USD. 
-            Market capitalization represents the total value of shares issued by all publicly traded US companies.
+            Stock market cap is the total market value of all US publicly traded companies' outstanding shares.
         </p>
         
         <!-- Time Range Selector -->

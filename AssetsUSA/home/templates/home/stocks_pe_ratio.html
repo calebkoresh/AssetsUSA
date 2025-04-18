@@ -1,11 +1,13 @@
 {% extends 'home/base.html' %}
 
-{% block title %}Stock Market PE Ratio - AssetsUSA{% endblock %}
+{% block title %}Stock Market PE Ratio | Total Stock Market PE Ratio{% endblock %}
 
 {% block extra_head %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/charts.css' %}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta name="description" content="The total stock market P/E ratio, or stock market PE ratio, measures the overall valuation of US equities by comparing total market capitalization to aggregate earnings over time.">
+    <meta name="keywords" content="stock market pe ratio, total stock market pe ratio">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 {% endblock %}
 
@@ -22,11 +24,9 @@
     </div>
 
     <div class="container">
-        <h1>Stock Market PE Ratio</h1>
+        <h1>Total Stock Market P/E Ratio</h1>
         <p class="chart-description">
-            This chart shows the Price-to-Earnings (PE) ratio of the overall US stock market over time. 
-            The PE ratio is a key valuation metric that compares a company's stock price to its earnings per share, 
-            indicating whether the market is potentially overvalued or undervalued.
+            The total stock market P/E ratio, or stock market PE ratio, measures the overall valuation of US equities by comparing total market capitalization to aggregate earnings over time.
         </p>
         
         <!-- Time Range Selector -->
