@@ -7,31 +7,6 @@
     <title>{% block title %}AssetsUSA{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
-    <style>
-        .auth-button {
-            position: absolute;
-            right: 24px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--accent-color);
-            color: var(--bg-primary);
-            padding: 6px 12px;
-            border-radius: var(--border-radius);
-            font-weight: 600;
-            text-decoration: none;
-            transition: opacity 0.2s ease;
-        }
-        .auth-button:hover {
-            opacity: 0.9;
-        }
-        /* override position for notes button */
-        .notes-button {
-            right: 90px;
-        }
-        .notes-button:hover {
-            opacity: 0.9;
-        }
-    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
