@@ -8,10 +8,29 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <style>
-        .header { display: flex; align-items: center; justify-content: flex-end; position: relative; }
-        .nav { position: absolute; left: 0; right: 0; display: flex; justify-content: center; flex-wrap: wrap; }
-        .auth-buttons { display: flex; gap: 8px; }
-        .auth-button { margin: 0 4px; }
+        .auth-button {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--accent-color);
+            color: var(--bg-primary);
+            padding: 6px 12px;
+            border-radius: var(--border-radius);
+            font-weight: 600;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+        .auth-button:hover {
+            opacity: 0.9;
+        }
+        /* override position for notes button */
+        .notes-button {
+            right: 90px;
+        }
+        .notes-button:hover {
+            opacity: 0.9;
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
@@ -235,14 +254,12 @@
                 </div>
             </div>
         </nav>
-        <div class="auth-buttons">
-            {% if user.is_authenticated %}
-                <a href="{% url 'accounts:note_list' %}" class="auth-button">Notes</a>
-                <a href="{% url 'logout' %}" class="auth-button">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="auth-button">Login</a>
-            {% endif %}
-        </div>
+        {% if user.is_authenticated %}
+            <a href="{% url 'accounts:note_list' %}" class="auth-button notes-button">Notes</a>
+            <a href="{% url 'logout' %}" class="auth-button">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="auth-button">Login</a>
+        {% endif %}
     </header>
 
     <div class="content">
