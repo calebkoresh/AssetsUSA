@@ -63,8 +63,6 @@ body {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    max-width: 1200px;
-    margin: 0 auto;
     /* center nav by absolute positioning */
     position: absolute;
     left: 50%;

@@ -7,6 +7,12 @@
     <title>{% block title %}AssetsUSA{% endblock %}</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <style>
+        .header { display: flex; align-items: center; justify-content: flex-end; position: relative; }
+        .nav { position: absolute; left: 0; right: 0; display: flex; justify-content: center; flex-wrap: wrap; }
+        .auth-buttons { display: flex; gap: 8px; }
+        .auth-button { margin: 0 4px; }
+    </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -229,12 +235,14 @@
                 </div>
             </div>
         </nav>
-        {% if user.is_authenticated %}
-            <a href="{% url 'accounts:note_list' %}" class="auth-button notes-button">Notes</a>
-            <a href="{% url 'logout' %}" class="auth-button">Logout</a>
-        {% else %}
-            <a href="{% url 'login' %}" class="auth-button">Login</a>
-        {% endif %}
+        <div class="auth-buttons">
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:note_list' %}" class="auth-button">Notes</a>
+                <a href="{% url 'logout' %}" class="auth-button">Logout</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="auth-button">Login</a>
+            {% endif %}
+        </div>
     </header>
 
     <div class="content">
