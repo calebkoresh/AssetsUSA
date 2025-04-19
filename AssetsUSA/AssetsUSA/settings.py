@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
@@ -87,12 +88,34 @@ WSGI_APPLICATION = 'AssetsUSA.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# If the RENDER‑provided DATABASE_URL environment variable is present, use it
+# (Render automatically injects this for PostgreSQL databases you attach).
+# Otherwise fall back to the local SQLite database for development.
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Parse the DATABASE_URL and configure persistent connections
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=600,          # keep connections open for 10 minutes
+            conn_health_checks=True,   # periodically check connection health
+        )
     }
-}
+    # Ensure SSL is required when Render provides an SSL‑enabled DB URL
+    DATABASES['default']["OPTIONS"] = {
+        **DATABASES['default'].get("OPTIONS", {}),
+        "sslmode": "require",
+    }
+else:
+    # Local development DB (SQLite)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation
