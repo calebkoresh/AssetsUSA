@@ -100,7 +100,7 @@ if DATABASE_URL:
         'default': dj_database_url.config(
             default=DATABASE_URL,
             conn_max_age=600,          # keep connections open for 10 minutes
-            conn_health_checks=True,   # periodically check connection health
+            # conn_health_checks option is not available in dj-database-url <2.x
         )
     }
     # Ensure SSL is required when Render provides an SSL‑enabled DB URL
