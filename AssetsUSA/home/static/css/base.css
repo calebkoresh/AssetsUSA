@@ -30,6 +30,9 @@ body {
 
 /* Header styling */
 .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: var(--bg-secondary);
     padding: 12px 24px;
     width: 100%;
@@ -58,10 +61,11 @@ body {
 
 .nav {
     display: flex;
+    flex: 1;
     justify-content: center;
     flex-wrap: wrap;
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0;
 }
 
 .nav-item {
