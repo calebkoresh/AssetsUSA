@@ -37,6 +37,7 @@
 </head>
 <body>
     <header class="header">
+        <div class="hamburger">&#9776;</div>
         <nav class="nav">
             <div class="nav-item">
                 <span>Home</span>
@@ -274,9 +275,12 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         const header = document.querySelector('.header');
+        const hamburger = document.querySelector('.hamburger');
+        const nav = document.querySelector('.nav');
         const navItems = document.querySelectorAll('.nav-item');
         // Hide all dropdowns
         function hideAllDropdowns() {
+            if (window.innerWidth <= 768) return; // keep open behaviour for desktop only
             navItems.forEach(item => {
                 const dd = item.querySelector('.dropdown');
                 if (dd) dd.style.display = 'none';
@@ -302,6 +306,32 @@
             dd.addEventListener('mouseleave', () => {
                 // clear inline override so next open animates
                 dd.style.animation = '';
+            });
+        });
+        // Mobile: toggle nav visibility
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+        // Mobile: toggle dropdown visibility on click
+        navItems.forEach(item => {
+            const dropdown = item.querySelector('.dropdown');
+            if (dropdown) {
+                item.addEventListener('click', (e) => {
+                    if (window.innerWidth > 768) return;
+                    e.stopPropagation();
+                    item.classList.toggle('open');
+                });
+            }
+        });
+        // Toggle submenus on click
+        const submenuLinks = document.querySelectorAll('.dropdown-item > a.has-submenu');
+        submenuLinks.forEach(link => {
+            const parentItem = link.parentElement;
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth > 768) return;
+                e.preventDefault();
+                e.stopPropagation();
+                parentItem.classList.toggle('open');
             });
         });
     });
