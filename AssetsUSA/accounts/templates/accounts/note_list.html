@@ -27,7 +27,7 @@
                 <small style="color: #666;">{{ note.created_at|date:"Y-m-d H:i" }}</small>
                 <div style="position: absolute; top: 8px; right: 8px;">
                     <a href="{% url 'accounts:note_edit' note.pk %}" class="edit-btn" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer; margin-right: 8px;">Edit</a>
-                    <a href="{% url 'accounts:note_delete' note.pk %}" class="delete-btn" style="background-color: var(--error-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer;">Delete</a>
+                    <a href="{% url 'accounts:note_delete' note.pk %}" class="delete-btn" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer; margin-left: 8px;">Delete</a>
                 </div>
             </li>
         {% empty %}
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <small style="color:#666;">${json.created_at}</small>
                     <div style="position:absolute; top:8px; right:8px;">
                         <a href="/notes/edit/${json.id}/" class="edit-btn" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer; margin-right: 8px;">Edit</a>
-                        <a href="/notes/delete/${json.id}/" class="delete-btn" style="background-color: var(--error-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer;">Delete</a>
+                        <a href="/notes/delete/${json.id}/" class="delete-btn" style="background-color: var(--accent-color); color: var(--bg-primary); padding: 6px 12px; border-radius: var(--border-radius); font-weight: 600; border: none; cursor: pointer; margin-left: 8px;">Delete</a>
                     </div>`;
                 ul.prepend(li);
                 form.reset();
